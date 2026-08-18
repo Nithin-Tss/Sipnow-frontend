@@ -1,0 +1,181 @@
+import { useNavigate, useParams } from "react-router-dom";
+import Reveal from "../components/Reveal.jsx";
+import PageHero from "../components/PageHero.jsx";
+import { formatAddress } from "../utils/addressStorage.js";
+import {
+  formatCartQuantity,
+  formatCurrency,
+  parsePrice,
+} from "../utils/productHelpers.js";
+
+function readOrder(orderNumber) {
+  try {
+    const orders = JSON.parse(window.localStorage.getItem("sipnow-orders"));
+
+    return Array.isArray(orders)
+      ? orders.find((order) => order.orderNumber === orderNumber)
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+export default function OrderDetail() {
+  const navigate = useNavigate();
+  const { orderNumber } = useParams();
+
+  const order = readOrder(orderNumber);
+
+  if (!order) {
+    return (
+      <div className="pt-36 pb-24 sm:pt-40 lg:pt-44">
+        <PageHero
+          onBack={() => navigate("/profile")}
+          backLabel="Back to profile"
+          tag="Order details"
+        />
+
+        <Reveal>
+          <main className="mx-auto mt-10 max-w-3xl px-margin-mobile md:px-margin-desktop">
+            <section className="glass-panel rounded-2xl p-8 text-center">
+              <span className="material-symbols-outlined text-5xl text-primary">
+                receipt_long
+              </span>
+
+              <h1 className="mt-4 font-headline-md text-3xl">
+                Order not found
+              </h1>
+
+              <p className="mt-3 text-on-surface-variant">
+                This order is unavailable in local order history.
+              </p>
+            </section>
+          </main>
+        </Reveal>
+      </div>
+    );
+  }
+
+  const address = formatAddress(order.deliveryAddress);
+
+  return (
+    <div className="pt-36 pb-24 sm:pt-40 lg:pt-44">
+      <PageHero
+        onBack={() => navigate("/profile")}
+        backLabel="Back to profile"
+        tag="Order details"
+      />
+
+      <Reveal>
+        <main className="mx-auto mt-10 max-w-3xl px-margin-mobile md:px-margin-desktop">
+          <section className="glass-panel rounded-2xl p-6 sm:p-8">
+            {/* ORDER HEADER */}
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-[0.16em] text-primary">
+                  Order details
+                </p>
+
+                <h1 className="mt-3 font-headline-md text-3xl">
+                  {order.orderNumber}
+                </h1>
+
+                <p className="mt-2 text-sm text-on-surface-variant">
+                  Placed {new Date(order.placedAt).toLocaleString()}
+                </p>
+              </div>
+
+              <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm text-primary">
+                {order.status?.replaceAll("_", " ") ?? "Created"}
+              </span>
+            </div>
+
+            {/* ORDER INFORMATION */}
+            <div className="mt-6 grid gap-4 border-t border-primary/10 pt-6 sm:grid-cols-2">
+              <div>
+                <p className="text-xs uppercase tracking-wider text-on-surface-variant">
+                  Fulfilment
+                </p>
+
+                <p className="mt-1 capitalize">{order.fulfilment}</p>
+              </div>
+
+              {address && (
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-on-surface-variant">
+                    Delivery address
+                  </p>
+
+                  <p className="mt-1">{address}</p>
+                </div>
+              )}
+            </div>
+
+            {/* ITEMS */}
+            <div className="mt-6 border-t border-primary/10 pt-6">
+              <h2 className="font-headline-md text-xl">Items</h2>
+
+              <div className="mt-3 space-y-3">
+                {order.cartItems.map((item) => (
+                  <div
+                    className="flex items-center gap-3"
+                    key={`${item.product.name}-${item.packSize ?? 1}`}
+                  >
+                    <img
+                      alt=""
+                      className="h-12 w-12 rounded-md bg-surface-container-high object-contain"
+                      src={item.product.image}
+                    />
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium">
+                        {item.product.name}
+                      </p>
+
+                      <p className="text-xs text-on-surface-variant">
+                        {formatCartQuantity(item.quantity, item.packSize ?? 1)}
+                      </p>
+                    </div>
+
+                    <p>
+                      {formatCurrency(
+                        parsePrice(item.product.price) *
+                          item.quantity *
+                          (item.packSize ?? 1)
+                      )}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* TOTAL */}
+            <div className="mt-6 space-y-2 border-t border-primary/10 pt-5 text-sm">
+              <div className="flex justify-between text-on-surface-variant">
+                <span>Subtotal</span>
+
+                <span>{formatCurrency(order.subtotal)}</span>
+              </div>
+
+              {order.discount > 0 && (
+                <div className="flex justify-between text-on-surface-variant">
+                  <span>Discount</span>
+
+                  <span>-{formatCurrency(order.discount)}</span>
+                </div>
+              )}
+
+              <div className="flex justify-between border-t border-primary/10 pt-3 font-headline-md text-lg">
+                <span>Total</span>
+
+                <span className="text-primary">
+                  {formatCurrency(order.total ?? order.subtotal)}
+                </span>
+              </div>
+            </div>
+          </section>
+        </main>
+      </Reveal>
+    </div>
+  );
+}
