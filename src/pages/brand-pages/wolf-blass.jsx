@@ -57,16 +57,19 @@ export default function WolfBlass({
   return (
     <div className="min-h-screen bg-background text-on-surface">
       {/* ========================================================
-          BRAND BANNER
-      ======================================================== */}
+    BRAND BANNER
+======================================================== */}
 
-      <section className="relative w-full overflow-hidden">
-        <img
-          src={wolfBlassBanner}
-          alt={BRAND_NAME}
-          className="w-full h-auto object-cover object-top block"
-        />
-      </section>
+        <section className="relative w-full min-h-[560px] md:min-h-[720px] overflow-hidden">
+          <img
+            src={wolfBlassBanner}
+            alt="Wolf Blass"
+            className="absolute inset-0 w-full h-full object-cover object-top"
+          />
+
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-black/30" />
+        </section>
 
       {/* ========================================================
           ABOUT THE BRAND
