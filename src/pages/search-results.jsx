@@ -28,12 +28,16 @@ export default function SearchResults({
       const category = product.category?.toLowerCase() || "";
       const categoryGroup = product.categoryGroup?.toLowerCase() || "";
       const type = product.type?.toLowerCase() || "";
+      const brand = product.brand?.toLowerCase() || "";
+      const manufacturer = product.manufacturer?.toLowerCase() || "";
 
       return (
         name.includes(term) ||
         category.includes(term) ||
         categoryGroup.includes(term) ||
-        type.includes(term)
+        type.includes(term) ||
+        brand.includes(term) ||
+        manufacturer.includes(term)
       );
     });
   }, [products, query]);
