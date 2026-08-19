@@ -11,16 +11,11 @@ import {
   setDefaultAddress,
   upsertAddress,
 } from "../utils/addressStorage.js";
-<<<<<<< HEAD
 import {
   AUSTRALIAN_MOBILE_PATTERN,
-  isValidEmail,
   NAME_PART_PATTERN,
 } from "../utils/validation.js";
-=======
-import { AUSTRALIAN_MOBILE_PATTERN, NAME_PART_PATTERN } from "../utils/validation.js";
 import { validateEmail } from "../utils/emailValidation.js";
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
 
 const ADDRESS_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./#-]{10,100}$/;
 
@@ -209,15 +204,8 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       [name]: cleanedValue,
     }));
 
-<<<<<<< HEAD
-    if (error) {
-      setError("");
-    }
     if (fieldErrors[name])
       setFieldErrors((current) => ({ ...current, [name]: "" }));
-=======
-    if (fieldErrors[name]) setFieldErrors((current) => ({ ...current, [name]: "" }));
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
 
     if (profileNotice) {
       setProfileNotice(null);
@@ -940,8 +928,13 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
             </div>
 
             {wishlistNotice && (
-              <div className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300" role="status">
-                <span className="material-symbols-outlined text-[18px]">check_circle</span>
+              <div
+                className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300"
+                role="status"
+              >
+                <span className="material-symbols-outlined text-[18px]">
+                  check_circle
+                </span>
                 {wishlistNotice}
               </div>
             )}
@@ -980,13 +973,10 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-error/20 bg-error/5 text-error transition-all duration-200 hover:border-error/40 hover:bg-error/10"
                       onClick={() => {
                         toggleWishlist(product);
-<<<<<<< HEAD
                         setProfileNotice({
                           tone: "success",
                           text: `${product.name} has been removed from your wishlist.`,
                         });
-=======
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
                       }}
                       title={`Remove ${product.name} from wishlist`}
                       type="button"

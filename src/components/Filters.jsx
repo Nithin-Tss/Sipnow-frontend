@@ -68,7 +68,10 @@ export default function Filters({
     const headerEl = document.querySelector("nav");
     const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 0;
     const rectTop = el.getBoundingClientRect().top;
-    const target = Math.max(0, window.pageYOffset + rectTop - headerHeight - 16);
+    const target = Math.max(
+      0,
+      window.pageYOffset + rectTop - headerHeight - 16
+    );
 
     window.scrollTo({ top: target, left: 0, behavior: "smooth" });
   }, [

@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { validateEmail } from "../utils/emailValidation.js";
 
-<<<<<<< HEAD
-const EMAIL_RE = /^[^\s@]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
-=======
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
 const STORAGE_KEY = "sipnow-newsletter-subscription";
 
 function getStoredSubscription() {

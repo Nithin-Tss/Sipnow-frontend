@@ -356,14 +356,14 @@ export default function App() {
       email: nextUser.email,
       mobile: nextUser.mobile,
     });
-<<<<<<< HEAD
+    setCartItems(
+      normalizeStoredCart(
+        readStored(`sipnow-cart:${nextUser.email.toLowerCase()}`, [])
+      )
+    );
     setWishlistItems(
       readStored(`sipnow-wishlist:${nextUser.email.toLowerCase()}`, [])
     );
-=======
-    setCartItems(normalizeStoredCart(readStored(`sipnow-cart:${nextUser.email.toLowerCase()}`, [])));
-    setWishlistItems(readStored(`sipnow-wishlist:${nextUser.email.toLowerCase()}`, []));
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
     switchAuthPage(authDestination);
   };
 

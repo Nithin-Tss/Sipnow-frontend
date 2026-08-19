@@ -6,16 +6,15 @@ import Reveal from "../../components/Reveal.jsx";
 export default function GiftCards({ onAddToCart, onBack, onRequireSignUp }) {
   const navigate = useNavigate();
   const [selectedPreset, setSelectedPreset] = useState(100);
+  const [customAmount, setCustomAmount] = useState("100");
 
   const presets = [50, 100, 200];
 
   const handlePresetSelect = (preset) => {
     setSelectedPreset(preset);
+    setCustomAmount(String(preset));
   };
 
-<<<<<<< HEAD
-  const currentAmount = selectedPreset || 0;
-=======
   const handleCustomAmountChange = (e) => {
     const val = e.target.value.replace(/[^\d.]/g, "");
     setCustomAmount(val);
@@ -28,7 +27,6 @@ export default function GiftCards({ onAddToCart, onBack, onRequireSignUp }) {
   };
 
   const currentAmount = parseFloat(customAmount) || 0;
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
   const isValidAmount = currentAmount > 0;
 
   const handlePayNow = (e) => {
@@ -84,12 +82,6 @@ export default function GiftCards({ onAddToCart, onBack, onRequireSignUp }) {
                 </span>
 
                 <input
-<<<<<<< HEAD
-                  type="text"
-                  readOnly
-                  value={selectedPreset}
-                  className="w-full bg-surface-container-lowest/80 border border-primary/30 rounded-2xl py-4 pl-11 pr-6 text-center text-2xl font-bold text-on-surface focus:outline-none cursor-default select-none transition-all"
-=======
                   type="number"
                   inputMode="decimal"
                   min="1"
@@ -98,10 +90,10 @@ export default function GiftCards({ onAddToCart, onBack, onRequireSignUp }) {
                   value={customAmount}
                   onChange={handleCustomAmountChange}
                   onKeyDown={(event) => {
-                    if (["e", "E", "+", "-"].includes(event.key)) event.preventDefault();
+                    if (["e", "E", "+", "-"].includes(event.key))
+                      event.preventDefault();
                   }}
                   className="w-full bg-surface-container-lowest/80 border border-primary/30 rounded-2xl py-4 pl-11 pr-6 text-center text-2xl font-bold text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
                 />
               </div>
             </div>

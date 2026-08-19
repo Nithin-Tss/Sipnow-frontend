@@ -210,7 +210,9 @@ export default function ContactUs({ onBack }) {
                       onChange={handleChange}
                       className={`w-full bg-surface-container-low border rounded-xl px-4 py-3 text-on-surface placeholder:text-outline/70 focus:outline-none transition-colors ${emailError ? "border-error focus:border-error" : "border-outline-variant/40 focus:border-primary"}`}
                     />
-                    {emailError && <p className="text-xs text-error">{emailError}</p>}
+                    {emailError && (
+                      <p className="text-xs text-error">{emailError}</p>
+                    )}
                   </div>
 
                   {/* Your Email */}

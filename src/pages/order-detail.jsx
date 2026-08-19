@@ -27,7 +27,9 @@ function readOrder(orderNumber, user) {
 
 function formatOrderId(orderNumber) {
   if (String(orderNumber ?? "").startsWith("#")) return orderNumber;
-  const digits = String(orderNumber ?? "").replace(/\D/g, "").slice(-5);
+  const digits = String(orderNumber ?? "")
+    .replace(/\D/g, "")
+    .slice(-5);
   return digits ? `#${digits.padStart(5, "0")}` : "#00000";
 }
 
@@ -71,7 +73,6 @@ export default function OrderDetail({ user }) {
   const address = formatAddress(order.deliveryAddress);
   const cancelOrder = () => {
     if (order.status === "CANCELLED") return;
-<<<<<<< HEAD
     const orders = JSON.parse(
       window.localStorage.getItem("sipnow-orders") ?? "[]"
     );
@@ -85,13 +86,8 @@ export default function OrderDetail({ user }) {
         )
       )
     );
-    navigate("/order-history");
-=======
-    const orders = JSON.parse(window.localStorage.getItem("sipnow-orders") ?? "[]");
-    window.localStorage.setItem("sipnow-orders", JSON.stringify(orders.map((item) => item.orderNumber === order.orderNumber ? { ...item, status: "CANCELLED" } : item)));
     setOrder((current) => ({ ...current, status: "CANCELLED" }));
     setNotice(`Order ${formatOrderId(order.orderNumber)} has been cancelled.`);
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
   };
 
   return (
@@ -125,7 +121,17 @@ export default function OrderDetail({ user }) {
                 {order.status?.replaceAll("_", " ") ?? "Created"}
               </span>
             </div>
-<<<<<<< HEAD
+            {notice && (
+              <div
+                className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300"
+                role="status"
+              >
+                <span className="material-symbols-outlined text-[18px]">
+                  check_circle
+                </span>
+                {notice}
+              </div>
+            )}
             {order.status !== "CANCELLED" && (
               <button
                 className="mt-5 rounded-lg border border-error/40 px-4 py-2 text-sm text-error hover:bg-error/10"
@@ -135,10 +141,6 @@ export default function OrderDetail({ user }) {
                 Cancel order
               </button>
             )}
-=======
-            {notice && <div className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300" role="status"><span className="material-symbols-outlined text-[18px]">check_circle</span>{notice}</div>}
-            {order.status !== "CANCELLED" && <button className="mt-5 rounded-lg border border-error/40 px-4 py-2 text-sm text-error hover:bg-error/10" onClick={cancelOrder} type="button">Cancel order</button>}
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
 
             {/* ORDER INFORMATION */}
             <div className="mt-6 grid gap-4 border-t border-primary/10 pt-6 sm:grid-cols-2">

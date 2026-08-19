@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-<<<<<<< HEAD
 import {
   AUSTRALIAN_MOBILE_PATTERN,
-  isValidEmail,
   NAME_PART_PATTERN,
   PASSWORD_PATTERN,
 } from "../utils/validation.js";
-=======
-import { AUSTRALIAN_MOBILE_PATTERN, NAME_PART_PATTERN, PASSWORD_PATTERN } from "../utils/validation.js";
 import { validateEmail } from "../utils/emailValidation.js";
 import PageHero from "../components/PageHero.jsx";
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
 
 const DEMO_OTP = "123456";
 const EMAIL_VERIFICATION_TTL = 10 * 60 * 1000;
@@ -510,19 +505,6 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     <div className="min-h-screen bg-[#09080a] px-5 pt-32 pb-10 text-white sm:pt-36 sm:pb-16">
       <PageHero onBack={() => navigate("/")} />
       <main className="mx-auto w-full max-w-xl rounded-[2rem] border border-primary/30 bg-[#100e11] p-8 text-white shadow-3xl shadow-black/50 sm:p-14">
-<<<<<<< HEAD
-        <button
-          className="flex items-center gap-2 text-sm text-primary hover:underline"
-          onClick={() => navigate("/")}
-          type="button"
-        >
-          <span className="material-symbols-outlined text-[18px]">
-            arrow_back
-          </span>{" "}
-          Back to home
-        </button>
-=======
->>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
         <h1
           className={`font-headline-md text-4xl sm:text-5xl ${isSignup ? "mt-7" : "text-primary"}`}
         >
