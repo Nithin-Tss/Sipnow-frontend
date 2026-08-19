@@ -87,7 +87,7 @@ export default function Smrinoff({
           BRAND BANNER
       ======================================================== */}
 
-      <section className="relative w-full min-h-[420px] md:min-h-[560px] overflow-hidden">
+      <section className="relative w-full min-h-[740px] overflow-hidden">
 
         <img
           src={smirnoffBanner}
@@ -124,7 +124,7 @@ export default function Smrinoff({
 
         <div className="max-w-container-max mx-auto">
 
-          <div className="max-w-4xl">
+          <div className="max-w-4xl mx-auto text-center">
 
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
@@ -140,10 +140,7 @@ export default function Smrinoff({
               taste and enjoyable occasions.
             </p>
 
-            <p className="mt-4 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Explore the Smirnoff range and discover
-              products made for every occasion.
-            </p>
+           
 
           </div>
 

@@ -1,0 +1,1 @@
+import{j as o}from"./index-DbUFBrwn.js";import{P as e}from"./PageHero-QK-IJbPY.js";import"./Reveal-CjEOGKwD.js";const s="Wolf Blass";function a({onBack:t}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(e,{onBack:t,tag:"Brand",title:s,description:`The ${s} collection is coming soon.`})})}export{a as default};

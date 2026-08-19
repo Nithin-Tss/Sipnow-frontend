@@ -81,7 +81,7 @@ export default function HardRated({
           BRAND BANNER
       ======================================================== */}
 
-      <section className="relative w-full min-h-[420px] md:min-h-[560px] overflow-hidden">
+      <section className="relative w-full min-h-[740px] overflow-hidden">
 
         <img
           src={hardRatedBanner}
@@ -119,7 +119,7 @@ export default function HardRated({
 
         <div className="max-w-container-max mx-auto">
 
-          <div className="max-w-4xl">
+          <div className="max-w-4xl mx-auto text-center">
 
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
@@ -134,12 +134,6 @@ export default function HardRated({
               drink that is. With low fizz, zesty flavour and
               refreshment that packs a punch. Perfect for here,
               there, and everywhere.
-            </p>
-
-            <p className="mt-4 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Hard Rated is packed with refreshing flavour.
-              Explore the Hard Rated collection and discover
-              products made for easy drinking.
             </p>
 
           </div>
