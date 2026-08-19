@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { validateEmail } from "../utils/emailValidation.js";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const STORAGE_KEY = "sipnow-newsletter-subscription";
 
 function getStoredSubscription() {
@@ -55,9 +55,10 @@ export function useNewsletterForm() {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     const targetEmail = email.trim();
-    if (!EMAIL_RE.test(targetEmail)) {
+    const emailError = validateEmail(targetEmail);
+    if (emailError) {
       setStatus("error");
-      setErrorMessage("Please enter a valid email address.");
+      setErrorMessage(emailError);
       return;
     }
 

@@ -16,7 +16,7 @@ export default function GiftCards({ onAddToCart, onBack, onRequireSignUp }) {
   };
 
   const handleCustomAmountChange = (e) => {
-    const val = e.target.value;
+    const val = e.target.value.replace(/[^\d.]/g, "");
     setCustomAmount(val);
     const num = parseFloat(val);
     if (!isNaN(num) && presets.includes(num)) {
@@ -83,11 +83,15 @@ export default function GiftCards({ onAddToCart, onBack, onRequireSignUp }) {
 
                 <input
                   type="number"
+                  inputMode="decimal"
                   min="1"
                   step="any"
                   placeholder="Custom Amount"
                   value={customAmount}
                   onChange={handleCustomAmountChange}
+                  onKeyDown={(event) => {
+                    if (["e", "E", "+", "-"].includes(event.key)) event.preventDefault();
+                  }}
                   className="w-full bg-surface-container-lowest/80 border border-primary/30 rounded-2xl py-4 pl-11 pr-6 text-center text-2xl font-bold text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               </div>

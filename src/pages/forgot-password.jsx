@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { validateEmail } from "../utils/emailValidation.js";
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MOBILE_PATTERN = /^4\d{8}$/;
 const DEMO_OTP = "123456";
 
@@ -45,13 +45,11 @@ export default function ForgotPassword() {
     const email = identifier.trim().toLowerCase();
     const mobile = normalizeMobile(identifier);
 
-    if (
-      (method === "email" && !EMAIL_PATTERN.test(email)) ||
-      (method === "mobile" && !MOBILE_PATTERN.test(mobile))
-    ) {
+    const emailError = method === "email" ? validateEmail(email) : "";
+    if (emailError || (method === "mobile" && !MOBILE_PATTERN.test(mobile))) {
       setError(
         method === "email"
-          ? "Enter a valid email address."
+          ? emailError
           : "Enter a valid Australian mobile number beginning with 4."
       );
       return;
