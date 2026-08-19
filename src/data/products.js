@@ -1,6 +1,8 @@
 import jacobGreek from "../assets/products/jacob-greek.png";
 import campo from "../assets/products/campo.png";
 import cooper from "../assets/products/cooper.png";
+import absolut from "../assets/products/absolut.png";
+import jimBeam from "../assets/products/jim-beam.png";
 
 export const products = [
   // =====================================================
@@ -77,8 +79,7 @@ export const products = [
   // =====================================================
 
   {
-    image:
-      "https://media.sipnow.com.au/sipnow/products/GUEST_e307542d-1e91-4688-859b-9bbb0a78b3ce__1_.jpg",
+    image: absolut,
 
     badgeStyle: "glow",
     icon: "liquor",
@@ -236,7 +237,7 @@ export const products = [
   // =====================================================
 
   {
-    image: "https://media.sipnow.com.au/sipnow/products/001.webp",
+    image: jimBeam,
 
     badgeStyle: "glow",
     icon: "liquor",

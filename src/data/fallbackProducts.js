@@ -1,11 +1,15 @@
+import absolut from "../assets/products/absolut.png";
 import campo from "../assets/products/campo.png";
 import cooper from "../assets/products/cooper.png";
 import jacobGreek from "../assets/products/jacob-greek.png";
+import jimBeam from "../assets/products/jim-beam.png";
 
 const IMAGES = {
+  "absolut.png": absolut,
   "campo.png": campo,
   "cooper.png": cooper,
   "jacob-greek.png": jacobGreek,
+  "jim-beam.png": jimBeam,
 };
 
 function resolveImage(path) {
@@ -51,7 +55,7 @@ const RAW_PRODUCTS = [
     category: "Vodka · 6 x 200mL",
     categoryGroup: "spirits",
     price: 17.98,
-    image: "/assets/products/cooper.png",
+    image: "/assets/products/absolut.png",
     inStock: true,
     stockQuantity: 60,
     abv: "40.0%",
@@ -81,7 +85,7 @@ const RAW_PRODUCTS = [
     category: "Bourbon · 375mL",
     categoryGroup: "spirits",
     price: 5.22,
-    image: "/assets/products/cooper.png",
+    image: "/assets/products/jim-beam.png",
     inStock: true,
     stockQuantity: 150,
     abv: "6.7%",

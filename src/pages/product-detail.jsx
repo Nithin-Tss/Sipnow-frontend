@@ -8,12 +8,14 @@ import {
   useCartSelectionUpdater,
 } from "../context/useCartItems.js";
 import { useAddToCartFeedback } from "../hooks/useAddToCartFeedback.js";
+import { useInStorePromotions } from "../hooks/useContent.js";
 import {
   DEFAULT_PACK_SIZES,
   findProductBySlug,
   formatCurrency,
   formatPackLabel,
   getCartCounts,
+  getProductSlug,
   parsePrice,
 } from "../utils/productHelpers.js";
 
@@ -189,9 +191,41 @@ function AddToCartPanel({ product, onAdd }) {
 export default function ProductDetail({ products = [], onAddToCart }) {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { data: inStorePromotions = [] } = useInStorePromotions();
+
+  const allProducts = useMemo(() => {
+    const promoMap = new Map(
+      inStorePromotions.map((promo) => [getProductSlug(promo), promo])
+    );
+
+    const mergedProducts = products.map((p) => {
+      const slug = getProductSlug(p);
+      const promo = promoMap.get(slug);
+      if (promo) {
+        return {
+          ...p,
+          ...promo,
+          price: promo.price || p.price,
+          originalPrice: promo.originalPrice || p.originalPrice || p.price,
+        };
+      }
+      return p;
+    });
+
+    for (const promo of inStorePromotions) {
+      if (
+        !mergedProducts.some((p) => getProductSlug(p) === getProductSlug(promo))
+      ) {
+        mergedProducts.push(promo);
+      }
+    }
+
+    return mergedProducts;
+  }, [products, inStorePromotions]);
+
   const product = useMemo(
-    () => findProductBySlug(products, slug),
-    [products, slug]
+    () => findProductBySlug(allProducts, slug),
+    [allProducts, slug]
   );
 
   const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
