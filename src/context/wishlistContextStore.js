@@ -5,6 +5,7 @@ import { createContext } from "react";
 // prop-drilling through every route and page that renders a ProductCard.
 export const WishlistContext = createContext({
   wishlistItems: [],
+  wishlistNotice: null,
   isWishlisted: () => false,
   toggleWishlist: () => {},
 });

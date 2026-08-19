@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useWishlist } from "../context/useWishlist.js";
 import Reveal from "../components/Reveal.jsx";
@@ -11,10 +11,8 @@ import {
   setDefaultAddress,
   upsertAddress,
 } from "../utils/addressStorage.js";
+import { AUSTRALIAN_MOBILE_PATTERN, isValidEmail, NAME_PART_PATTERN } from "../utils/validation.js";
 
-const NAME_PART_PATTERN = /^[A-Za-z][A-Za-z '-]{1,49}$/;
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MOBILE_PATTERN = /^4\d{8}$/;
 const ADDRESS_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./#-]{10,100}$/;
 
 /*
@@ -85,24 +83,6 @@ function normalizeMobile(value) {
     .slice(0, 9);
 }
 
-function readOrders() {
-  try {
-    const orders = JSON.parse(window.localStorage.getItem("sipnow-orders"));
-
-    if (Array.isArray(orders) && orders.length) {
-      return orders;
-    }
-
-    const lastOrder = JSON.parse(
-      window.localStorage.getItem("sipnow-last-order")
-    );
-
-    return lastOrder ? [lastOrder] : [];
-  } catch {
-    return [];
-  }
-}
-
 function getProfileValues(user, addresses) {
   const nameParts = (user?.name ?? "").trim().split(/\s+/).filter(Boolean);
 
@@ -117,75 +97,6 @@ function getProfileValues(user, addresses) {
     address: defaultAddress.address ?? "",
     city: defaultAddress.city ?? "",
   };
-}
-
-function OrderCard({ order }) {
-  const orderAddress = formatAddress(order.deliveryAddress);
-
-  return (
-    <article className="rounded-xl border border-primary/20 bg-primary/5 p-5 transition-all duration-300 hover:border-primary/40 hover:bg-primary/10">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="font-medium text-primary">
-            {order.orderNumber ?? "Order"}
-          </p>
-
-          <p className="mt-2 text-sm text-on-surface-variant">
-            {new Date(order.placedAt).toLocaleString()} ·{" "}
-            {order.fulfilment === "delivery" ? "Delivery" : "Pickup"}
-          </p>
-        </div>
-
-        {order.orderNumber && (
-          <Link
-            className="text-sm font-medium text-primary transition-colors hover:text-primary/70 hover:underline"
-            to={`/orders/${encodeURIComponent(order.orderNumber)}`}
-          >
-            View order details
-          </Link>
-        )}
-      </div>
-
-      {orderAddress && (
-        <div className="mt-4 rounded-lg bg-surface-container-high/70 p-3 text-sm">
-          <p className="text-xs uppercase tracking-wider text-on-surface-variant">
-            Ordered for delivery to
-          </p>
-
-          <p className="mt-1">{orderAddress}</p>
-        </div>
-      )}
-
-      <div className="mt-4 space-y-2 border-t border-primary/10 pt-4">
-        {order.cartItems.map((item) => (
-          <div
-            className="flex justify-between gap-4 text-sm"
-            key={`${item.product.name}-${item.packSize ?? 1}`}
-          >
-            <span>
-              {item.product.name} × {item.quantity}
-            </span>
-
-            <span>
-              {formatCurrency(
-                parsePrice(item.product.price) *
-                  item.quantity *
-                  (item.packSize ?? 1)
-              )}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-4 flex justify-between border-t border-primary/10 pt-4 font-headline-md">
-        <span>Total</span>
-
-        <span className="text-primary">
-          {formatCurrency(order.total ?? order.subtotal)}
-        </span>
-      </div>
-    </article>
-  );
 }
 
 function SavedAddressCard({ address, onDelete, onEdit, onSetDefault }) {
@@ -240,7 +151,7 @@ function SavedAddressCard({ address, onDelete, onEdit, onSetDefault }) {
   );
 }
 
-export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
+export default function Profile({ onLogout, onSave, onBack, user }) {
   const navigate = useNavigate();
 
   const { toggleWishlist, wishlistItems } = useWishlist();
@@ -251,11 +162,16 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
 
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [profileNotice, setProfileNotice] = useState(null);
   const [addressEditor, setAddressEditor] = useState(null);
   const [addressError, setAddressError] = useState("");
 
-  const orders = readOrders();
+  useEffect(() => {
+    if (!profileNotice) return undefined;
+    const timer = window.setTimeout(() => setProfileNotice(null), 3500);
+    return () => window.clearTimeout(timer);
+  }, [profileNotice]);
 
   const saveAddressCollection = (nextAddresses) => {
     persistAddresses(nextAddresses);
@@ -273,7 +189,9 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
     }
 
     if (name === "mobile") {
-      cleanedValue = normalizeMobile(value);
+      // Preserve invalid characters so validation can explain the problem
+      // instead of silently accepting a formatted number.
+      cleanedValue = value.slice(0, 9);
     }
 
     if (name === "city") {
@@ -288,6 +206,7 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
     if (error) {
       setError("");
     }
+    if (fieldErrors[name]) setFieldErrors((current) => ({ ...current, [name]: "" }));
 
     if (profileNotice) {
       setProfileNotice(null);
@@ -297,30 +216,26 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
   const saveProfile = (event) => {
     event.preventDefault();
 
-    const nextErrors = [];
+    const nextErrors = {};
 
     if (!NAME_PART_PATTERN.test(values.firstName.trim())) {
-      nextErrors.push("Enter a valid first name.");
+      nextErrors.firstName = "Enter a valid first name.";
     }
 
     if (!NAME_PART_PATTERN.test(values.lastName.trim())) {
-      nextErrors.push("Enter a valid last name.");
+      nextErrors.lastName = "Enter a valid last name.";
     }
 
-    if (!EMAIL_PATTERN.test(values.email.trim())) {
-      nextErrors.push("Enter a valid email address.");
+    if (!isValidEmail(values.email)) {
+      nextErrors.email = "Enter a valid email address.";
     }
 
-    if (!MOBILE_PATTERN.test(values.mobile)) {
-      nextErrors.push(
-        "Enter a valid Australian mobile number beginning with 4."
-      );
+    if (!AUSTRALIAN_MOBILE_PATTERN.test(values.mobile)) {
+      nextErrors.mobile = "Enter a valid Australian mobile number beginning with 4.";
     }
 
     if (values.address && !ADDRESS_PATTERN.test(values.address.trim())) {
-      nextErrors.push(
-        "Enter a street address with a building or street number."
-      );
+      nextErrors.address = "Enter a street address with a building or street number.";
     }
 
     /*
@@ -330,11 +245,12 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
      * will be accepted.
      */
     if (!isValidAustralianCity(values.city)) {
-      nextErrors.push("Please enter a valid Australian city or locality.");
+      nextErrors.city = "Please enter a valid Australian city or locality.";
     }
 
-    if (nextErrors.length) {
-      setError(nextErrors[0]);
+    if (Object.keys(nextErrors).length) {
+      setFieldErrors(nextErrors);
+      setError(Object.values(nextErrors)[0]);
       return;
     }
 
@@ -408,22 +324,11 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
     onSave(updatedUser);
 
     setError("");
-
-    let successMessage = "Profile changes saved successfully.";
-
-    if (addressChanged) {
-      successMessage = "Address changed successfully.";
-    } else if (nameChanged) {
-      successMessage = "Name changed successfully.";
-    } else if (mobileChanged) {
-      successMessage = "Mobile number changed successfully.";
-    } else if (emailChanged) {
-      successMessage = "Email changed successfully.";
-    }
+    setFieldErrors({});
 
     setProfileNotice({
       tone: "success",
-      text: successMessage,
+      text: "Profile updated successfully.",
     });
 
     setEditing(false);
@@ -648,7 +553,7 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
                                   : name
                         }
                         className={`w-full rounded-xl border bg-[#242326] px-4 py-3.5 text-sm text-white placeholder:text-gray-500 outline-none transition-all duration-200 ${
-                          error
+                          fieldErrors[name]
                             ? "border-error/70 focus:border-error focus:ring-2 focus:ring-error/10"
                             : "border-white/10 hover:border-white/20 focus:border-primary/70 focus:bg-[#29282b] focus:ring-4 focus:ring-primary/10"
                         }`}
@@ -678,6 +583,9 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
                           Enter a valid Australian city or locality.
                         </p>
                       )}
+                      {fieldErrors[name] && (
+                        <p className="mt-2 text-xs text-error">{fieldErrors[name]}</p>
+                      )}
                     </label>
                   ))}
                 </div>
@@ -698,6 +606,7 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
                     onClick={() => {
                       setValues(getProfileValues(user, addresses));
                       setError("");
+                      setFieldErrors({});
                       setProfileNotice(null);
                       setEditing(false);
                     }}
@@ -1056,20 +965,18 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
                       </p>
                     </div>
 
-                    {/* DEFECT_149 FIX */}
                     <button
                       aria-label={`Remove ${product.name} from wishlist`}
-                      className="flex shrink-0 items-center gap-2 rounded-lg border border-error/20 bg-error/5 px-3 py-2 text-error transition-all duration-200 hover:border-error/40 hover:bg-error/10"
-                      onClick={() => toggleWishlist(product)}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-error/20 bg-error/5 text-error transition-all duration-200 hover:border-error/40 hover:bg-error/10"
+                      onClick={() => {
+                        toggleWishlist(product);
+                        setProfileNotice({ tone: "success", text: `${product.name} has been removed from your wishlist.` });
+                      }}
                       title={`Remove ${product.name} from wishlist`}
                       type="button"
                     >
                       <span className="material-symbols-outlined text-[18px]">
                         delete
-                      </span>
-
-                      <span className="hidden text-xs font-medium sm:inline">
-                        Remove
                       </span>
                     </button>
                   </div>
@@ -1094,25 +1001,8 @@ export default function Profile({ onLogout, onSave, onShopAll, onBack, user }) {
       <section className="glass-panel mx-auto mt-6 max-w-6xl rounded-2xl p-6 sm:p-8">
         <h2 className="font-headline-md text-2xl">Order history</h2>
 
-        {orders.length ? (
-          <div className="mt-5 space-y-4">
-            {orders.map((order, index) => (
-              <OrderCard key={`${order.placedAt}-${index}`} order={order} />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-5 text-sm text-on-surface-variant">
-            <p>You have not placed an order yet.</p>
-
-            <button
-              className="mt-4 rounded-lg px-5 py-2 text-sm text-white primary-gradient"
-              onClick={onShopAll}
-              type="button"
-            >
-              Start shopping
-            </button>
-          </div>
-        )}
+        <p className="mt-2 text-sm text-on-surface-variant">View previous purchases and open individual order details.</p>
+        <button className="mt-5 rounded-lg px-5 py-2 text-sm text-white primary-gradient" onClick={() => navigate("/order-history")} type="button">View order history</button>
       </section>
     </div>
   );
