@@ -96,7 +96,7 @@ export default function DeBortoli({
             </h2>
 
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Explore the De Bortoli collection and discover wines crafted with
+              Explor the De Bortoli collection and discover wines crafted with
               generations of Australian winemaking experience. Browse
               Chardonnay, Shiraz, Cabernet Sauvignon and more.
             </p>
