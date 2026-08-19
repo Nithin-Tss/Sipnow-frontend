@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FALLBACK_PRODUCTS } from "../data/fallbackProducts.js";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
 const SERVER_ORIGIN = API_URL.replace(/\/api\/?$/, "");
@@ -24,6 +25,12 @@ export function useProducts() {
   useEffect(() => {
     let cancelled = false;
 
+    if (!API_URL) {
+      setProducts(FALLBACK_PRODUCTS);
+      setLoading(false);
+      return;
+    }
+
     fetch(`${API_URL}/products?limit=1000`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load products");
@@ -34,7 +41,9 @@ export function useProducts() {
         setProducts((data.items || []).map(adaptProduct));
       })
       .catch((err) => {
-        if (!cancelled) setError(err);
+        if (cancelled) return;
+        setError(err);
+        setProducts(FALLBACK_PRODUCTS);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
