@@ -1,1 +1,0 @@
-import{j as o}from"./index-BDsMbdIG.js";import{P as t}from"./PageHero-DWc2Opiu.js";import"./Reveal-BeVW0KEK.js";const r="Farmhand";function i({onBack:n}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(t,{onBack:n,tag:"Brand",title:r,description:`The ${r} collection is coming soon.`})})}export{i as default};

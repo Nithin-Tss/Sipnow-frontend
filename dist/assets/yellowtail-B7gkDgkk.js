@@ -1,1 +1,0 @@
-import{j as o}from"./index-BDsMbdIG.js";import{P as i}from"./PageHero-DWc2Opiu.js";import"./Reveal-BeVW0KEK.js";const t="Yellowtail";function a({onBack:e}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(i,{onBack:e,tag:"Brand",title:t,description:`The ${t} collection is coming soon.`})})}export{a as default};
