@@ -3,12 +3,12 @@ import {
   Navigate,
   Route,
   Routes,
-  useLocation,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 
-import AmbientBackground from "./components/AmbientBackground.jsx";
 import Footer from "./components/Footer.jsx";
+import AmbientBackground from "./components/AmbientBackground.jsx";
 import Navbar from "./components/Navbar.jsx";
 import QuizModal from "./components/QuizModal.jsx";
 import { useProducts } from "./hooks/useProducts.js";
@@ -1018,7 +1018,14 @@ export default function App() {
               />
               <Route
                 path="/brands/coopers"
-                element={<Coopers onBack={goHome} />}
+                element={
+                  <Coopers
+                    onBack={goHome}
+                    products={products}
+                    productsLoading={productsLoading}
+                    onAddToCart={addToCart}
+                  />
+                }
               />
               <Route
                 path="/brands/de-bortoli"
@@ -1026,7 +1033,14 @@ export default function App() {
               />
               <Route
                 path="/brands/farmhand"
-                element={<Farmhand onBack={goHome} />}
+                element={
+                  <Farmhand
+                    onBack={goHome}
+                    products={products}
+                    productsLoading={productsLoading}
+                    onAddToCart={addToCart}
+                  />
+                }
               />
               <Route
                 path="/brands/grant-burge"
@@ -1034,7 +1048,14 @@ export default function App() {
               />
               <Route
                 path="/brands/great-northern-brewing-co"
-                element={<GreatNorthernBrewingCo onBack={goHome} />}
+                element={
+                  <GreatNorthernBrewingCo
+                    onBack={goHome}
+                    products={products}
+                    productsLoading={productsLoading}
+                    onAddToCart={addToCart}
+                  />
+                }
               />
               <Route
                 path="/brands/hard-rated"
