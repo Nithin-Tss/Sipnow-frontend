@@ -29,8 +29,7 @@ export default function Yellowtail({
   productsLoading = false,
   onAddToCart,
 }) {
-  const { addedProduct, handleAddToCart } =
-    useAddToCartFeedback(onAddToCart);
+  const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
 
   /*
    * ============================================================
@@ -115,10 +114,10 @@ export default function Yellowtail({
             </h2>
 
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Explore our collection of Yellowtail wines, from vibrant reds
-              and crisp refreshing whites to joyful bubbles and fruity
-              favourites. Discover approachable Australian wines made to be
-              enjoyed for everyday moments and celebrations.
+              Explore our collection of Yellowtail wines, from vibrant reds and
+              crisp refreshing whites to joyful bubbles and fruity favourites.
+              Discover approachable Australian wines made to be enjoyed for
+              everyday moments and celebrations.
             </p>
           </div>
         </div>
@@ -148,9 +147,7 @@ export default function Yellowtail({
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestSellingProducts.length > 0 ? (
             <ProductGrid
@@ -171,8 +168,8 @@ export default function Yellowtail({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best selling Yellowtail products will appear here once
-                  product sales data is available.
+                  Best selling Yellowtail products will appear here once product
+                  sales data is available.
                 </p>
               </div>
             </div>
@@ -204,9 +201,7 @@ export default function Yellowtail({
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestRatedProducts.length > 0 ? (
             <ProductGrid
@@ -227,8 +222,8 @@ export default function Yellowtail({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best rated Yellowtail products will appear here once
-                  product ratings are available.
+                  Best rated Yellowtail products will appear here once product
+                  ratings are available.
                 </p>
               </div>
             </div>
@@ -271,8 +266,8 @@ export default function Yellowtail({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Yellowtail products will appear here once they are
-                  available in our collection.
+                  Yellowtail products will appear here once they are available
+                  in our collection.
                 </p>
               </div>
             </div>

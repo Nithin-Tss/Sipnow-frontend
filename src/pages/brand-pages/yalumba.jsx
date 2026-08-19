@@ -29,8 +29,7 @@ export default function Yalumba({
   productsLoading = false,
   onAddToCart,
 }) {
-  const { addedProduct, handleAddToCart } =
-    useAddToCartFeedback(onAddToCart);
+  const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
 
   /*
    * ============================================================
@@ -48,10 +47,7 @@ export default function Yalumba({
         .trim()
         .toLowerCase();
 
-      return (
-        brand === "yalumba" ||
-        name.includes("yalumba")
-      );
+      return brand === "yalumba" || name.includes("yalumba");
     });
   }, [products]);
 
@@ -155,9 +151,7 @@ export default function Yalumba({
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestSellingProducts.length > 0 ? (
             <ProductGrid
@@ -211,9 +205,7 @@ export default function Yalumba({
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestRatedProducts.length > 0 ? (
             <ProductGrid

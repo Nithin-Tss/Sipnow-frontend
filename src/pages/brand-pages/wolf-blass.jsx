@@ -10,8 +10,7 @@ export default function WolfBlass({
   productsLoading = false,
   onAddToCart,
 }) {
-  const { addedProduct, handleAddToCart } =
-    useAddToCartFeedback(onAddToCart);
+  const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
 
   // ============================================================
   // BRAND PRODUCTS
@@ -27,10 +26,7 @@ export default function WolfBlass({
         .trim()
         .toLowerCase();
 
-      return (
-        brand === "wolf blass" ||
-        name.includes("wolf blass")
-      );
+      return brand === "wolf blass" || name.includes("wolf blass");
     });
   }, [products]);
 
@@ -54,16 +50,12 @@ export default function WolfBlass({
 
   const bestRatedProducts = useMemo(() => {
     return [...brandProducts]
-      .sort(
-        (a, b) =>
-          Number(b.rating || 0) - Number(a.rating || 0)
-      )
+      .sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0))
       .slice(0, 6);
   }, [brandProducts]);
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
-
       {/* ========================================================
           BRAND BANNER
       ======================================================== */}
@@ -83,7 +75,6 @@ export default function WolfBlass({
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
         <div className="max-w-container-max mx-auto">
           <div className="max-w-4xl">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
@@ -97,7 +88,6 @@ export default function WolfBlass({
               and rosé to rich and expressive reds. Discover Australian wines
               crafted with distinctive character, quality and style.
             </p>
-
           </div>
         </div>
       </section>
@@ -108,10 +98,8 @@ export default function WolfBlass({
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
         <div className="max-w-container-max mx-auto">
-
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
             <div>
-
               <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
                 Wolf Blass
               </p>
@@ -123,15 +111,12 @@ export default function WolfBlass({
               <p className="mt-3 text-sm md:text-base text-on-surface-variant">
                 Discover the most popular Wolf Blass products.
               </p>
-
             </div>
           </div>
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestSellingProducts.length > 0 ? (
             <ProductGrid
@@ -142,9 +127,7 @@ export default function WolfBlass({
             />
           ) : (
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   trending_up
                 </span>
@@ -154,15 +137,12 @@ export default function WolfBlass({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best selling Wolf Blass products will appear here once
-                  product sales data is available.
+                  Best selling Wolf Blass products will appear here once product
+                  sales data is available.
                 </p>
-
               </div>
-
             </div>
           )}
-
         </div>
       </section>
 
@@ -172,10 +152,8 @@ export default function WolfBlass({
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
         <div className="max-w-container-max mx-auto">
-
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
             <div>
-
               <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
                 Wolf Blass
               </p>
@@ -187,15 +165,12 @@ export default function WolfBlass({
               <p className="mt-3 text-sm md:text-base text-on-surface-variant">
                 Explore the highest-rated Wolf Blass products.
               </p>
-
             </div>
           </div>
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestRatedProducts.length > 0 ? (
             <ProductGrid
@@ -206,9 +181,7 @@ export default function WolfBlass({
             />
           ) : (
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   star
                 </span>
@@ -218,15 +191,12 @@ export default function WolfBlass({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best rated Wolf Blass products will appear here once
-                  product ratings are available.
+                  Best rated Wolf Blass products will appear here once product
+                  ratings are available.
                 </p>
-
               </div>
-
             </div>
           )}
-
         </div>
       </section>
 
@@ -236,9 +206,7 @@ export default function WolfBlass({
 
       <section className="px-margin-mobile md:px-margin-desktop pb-24">
         <div className="max-w-container-max mx-auto">
-
           <div className="mb-8">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
               Our Collection
             </p>
@@ -246,7 +214,6 @@ export default function WolfBlass({
             <h2 className="font-serif text-3xl md:text-4xl text-on-surface">
               All Wolf Blass Products
             </h2>
-
           </div>
 
           {brandProducts.length > 0 ? (
@@ -258,9 +225,7 @@ export default function WolfBlass({
             />
           ) : (
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   wine_bar
                 </span>
@@ -270,18 +235,14 @@ export default function WolfBlass({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Wolf Blass products will appear here once they are
-                  available in our collection.
+                  Wolf Blass products will appear here once they are available
+                  in our collection.
                 </p>
-
               </div>
-
             </div>
           )}
-
         </div>
       </section>
-
     </div>
   );
 }

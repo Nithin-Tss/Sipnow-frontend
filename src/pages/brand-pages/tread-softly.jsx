@@ -10,8 +10,7 @@ export default function TreadSoftly({
   productsLoading = false,
   onAddToCart,
 }) {
-  const { addedProduct, handleAddToCart } =
-    useAddToCartFeedback(onAddToCart);
+  const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
 
   /*
    * ============================================================
@@ -29,10 +28,7 @@ export default function TreadSoftly({
         .trim()
         .toLowerCase();
 
-      return (
-        brand === "tread softly" ||
-        name.includes("tread softly")
-      );
+      return brand === "tread softly" || name.includes("tread softly");
     });
   }, [products]);
 
@@ -96,8 +92,8 @@ export default function TreadSoftly({
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
               Explore our collection of Tread Softly wines, crafted to be
               naturally lighter while delivering fresh and flavoursome
-              character. Discover a range made with sustainability in mind,
-              from refreshing whites and rosé to expressive red wines.
+              character. Discover a range made with sustainability in mind, from
+              refreshing whites and rosé to expressive red wines.
             </p>
           </div>
         </div>
@@ -127,9 +123,7 @@ export default function TreadSoftly({
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestSellingProducts.length > 0 ? (
             <ProductGrid
@@ -183,9 +177,7 @@ export default function TreadSoftly({
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestRatedProducts.length > 0 ? (
             <ProductGrid
@@ -206,8 +198,8 @@ export default function TreadSoftly({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best rated Tread Softly products will appear here once
-                  product ratings are available.
+                  Best rated Tread Softly products will appear here once product
+                  ratings are available.
                 </p>
               </div>
             </div>
@@ -250,8 +242,8 @@ export default function TreadSoftly({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Tread Softly products will appear here once they are
-                  available in our collection.
+                  Tread Softly products will appear here once they are available
+                  in our collection.
                 </p>
               </div>
             </div>

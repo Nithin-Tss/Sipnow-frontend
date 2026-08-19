@@ -28,8 +28,7 @@ export default function JimBeam({
   productsLoading = false,
   onAddToCart,
 }) {
-  const { addedProduct, handleAddToCart } =
-    useAddToCartFeedback(onAddToCart);
+  const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
 
   /*
    * ============================================================
@@ -47,10 +46,7 @@ export default function JimBeam({
         .trim()
         .toLowerCase();
 
-      return (
-        brand === "jim beam" ||
-        name.includes("jim beam")
-      );
+      return brand === "jim beam" || name.includes("jim beam");
     });
   }, [products]);
 
@@ -112,10 +108,10 @@ export default function JimBeam({
             </h2>
 
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Explore our collection of Jim Beam Bourbon, from the iconic
-              Jim Beam Original to distinctive expressions crafted with
-              Kentucky bourbon tradition, quality ingredients and generations
-              of family expertise.
+              Explore our collection of Jim Beam Bourbon, from the iconic Jim
+              Beam Original to distinctive expressions crafted with Kentucky
+              bourbon tradition, quality ingredients and generations of family
+              expertise.
             </p>
           </div>
         </div>
@@ -145,9 +141,7 @@ export default function JimBeam({
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestSellingProducts.length > 0 ? (
             <ProductGrid
@@ -168,8 +162,8 @@ export default function JimBeam({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best selling Jim Beam products will appear here once
-                  product sales data is available.
+                  Best selling Jim Beam products will appear here once product
+                  sales data is available.
                 </p>
               </div>
             </div>
@@ -201,9 +195,7 @@ export default function JimBeam({
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestRatedProducts.length > 0 ? (
             <ProductGrid
@@ -224,8 +216,8 @@ export default function JimBeam({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best rated Jim Beam products will appear here once
-                  product ratings are available.
+                  Best rated Jim Beam products will appear here once product
+                  ratings are available.
                 </p>
               </div>
             </div>
@@ -268,11 +260,12 @@ export default function JimBeam({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Jim Beam products will appear here once they are
-                  available in our collection.
+                  Jim Beam products will appear here once they are available in
+                  our collection.
                 </p>
               </div>
             </div>
+          )}
         </div>
       </section>
     </div>

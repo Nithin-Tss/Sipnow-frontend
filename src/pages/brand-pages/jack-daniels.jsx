@@ -29,8 +29,7 @@ export default function JackDaniels({
   productsLoading = false,
   onAddToCart,
 }) {
-  const { addedProduct, handleAddToCart } =
-    useAddToCartFeedback(onAddToCart);
+  const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
 
   /*
    * ============================================================
@@ -87,7 +86,6 @@ export default function JackDaniels({
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
-
       {/* ========================================================
           BRAND BANNER
       ======================================================== */}
@@ -107,7 +105,6 @@ export default function JackDaniels({
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
         <div className="max-w-container-max mx-auto">
           <div className="max-w-4xl">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
@@ -119,10 +116,9 @@ export default function JackDaniels({
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
               Explore our collection of Jack Daniel's Tennessee Whiskey,
               featuring classic and distinctive expressions made with the
-              brand's long-standing Tennessee whiskey tradition and
-              signature charcoal-mellowing process.
+              brand's long-standing Tennessee whiskey tradition and signature
+              charcoal-mellowing process.
             </p>
-
           </div>
         </div>
       </section>
@@ -133,10 +129,8 @@ export default function JackDaniels({
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
         <div className="max-w-container-max mx-auto">
-
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
             <div>
-
               <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
                 Jack Daniel's
               </p>
@@ -148,15 +142,12 @@ export default function JackDaniels({
               <p className="mt-3 text-sm md:text-base text-on-surface-variant">
                 Discover the most popular Jack Daniel's products.
               </p>
-
             </div>
           </div>
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestSellingProducts.length > 0 ? (
             <ProductGrid
@@ -167,9 +158,7 @@ export default function JackDaniels({
             />
           ) : (
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   trending_up
                 </span>
@@ -182,12 +171,9 @@ export default function JackDaniels({
                   Best selling Jack Daniel's products will appear here once
                   product sales data is available.
                 </p>
-
               </div>
-
             </div>
           )}
-
         </div>
       </section>
 
@@ -197,10 +183,8 @@ export default function JackDaniels({
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
         <div className="max-w-container-max mx-auto">
-
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
             <div>
-
               <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
                 Jack Daniel's
               </p>
@@ -212,15 +196,12 @@ export default function JackDaniels({
               <p className="mt-3 text-sm md:text-base text-on-surface-variant">
                 Explore the highest-rated Jack Daniel's products.
               </p>
-
             </div>
           </div>
 
           {productsLoading ? (
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
           ) : bestRatedProducts.length > 0 ? (
             <ProductGrid
@@ -231,9 +212,7 @@ export default function JackDaniels({
             />
           ) : (
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   star
                 </span>
@@ -246,12 +225,9 @@ export default function JackDaniels({
                   Best rated Jack Daniel's products will appear here once
                   product ratings are available.
                 </p>
-
               </div>
-
             </div>
           )}
-
         </div>
       </section>
 
@@ -261,9 +237,7 @@ export default function JackDaniels({
 
       <section className="px-margin-mobile md:px-margin-desktop pb-24">
         <div className="max-w-container-max mx-auto">
-
           <div className="mb-8">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
               Our Collection
             </p>
@@ -271,7 +245,6 @@ export default function JackDaniels({
             <h2 className="font-serif text-3xl md:text-4xl text-on-surface">
               All Jack Daniel's Products
             </h2>
-
           </div>
 
           {brandProducts.length > 0 ? (
@@ -283,9 +256,7 @@ export default function JackDaniels({
             />
           ) : (
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   wine_bar
                 </span>
@@ -298,15 +269,11 @@ export default function JackDaniels({
                   Jack Daniel's products will appear here once they are
                   available in our collection.
                 </p>
-
               </div>
-
             </div>
           )}
-
         </div>
       </section>
-
     </div>
   );
 }
