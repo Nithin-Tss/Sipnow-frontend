@@ -1,1 +1,0 @@
-import{j as o}from"./index-DVy11dJB.js";import{P as r}from"./PageHero-DxXxKL1p.js";import"./Reveal-n9I9egdM.js";const t="De Bortoli";function a({onBack:e}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(r,{onBack:e,tag:"Brand",title:t,description:`The ${t} collection is coming soon.`})})}export{a as default};

@@ -1,1 +1,0 @@
-import{j as r}from"./index-DVy11dJB.js";import{P as o}from"./PageHero-DxXxKL1p.js";import"./Reveal-n9I9egdM.js";const t="Grant Burge";function a({onBack:e}){return r.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:r.jsx(o,{onBack:e,tag:"Brand",title:t,description:`The ${t} collection is coming soon.`})})}export{a as default};

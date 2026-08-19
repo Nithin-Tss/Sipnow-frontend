@@ -1,0 +1,1 @@
+import{j as o}from"./index-BDsMbdIG.js";import{P as r}from"./PageHero-DWc2Opiu.js";import"./Reveal-BeVW0KEK.js";const t="Yalumba";function i({onBack:e}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(r,{onBack:e,tag:"Brand",title:t,description:`The ${t} collection is coming soon.`})})}export{i as default};

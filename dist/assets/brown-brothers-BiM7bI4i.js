@@ -1,1 +1,0 @@
-import{j as o}from"./index-DVy11dJB.js";import{P as e}from"./PageHero-DxXxKL1p.js";import"./Reveal-n9I9egdM.js";const r="Brown Brothers";function a({onBack:t}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(e,{onBack:t,tag:"Brand",title:r,description:`The ${r} collection is coming soon.`})})}export{a as default};

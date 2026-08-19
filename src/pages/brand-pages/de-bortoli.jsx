@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import ProductGrid from "../../components/ProductGrid.jsx";
 import { useAddToCartFeedback } from "../../hooks/useAddToCartFeedback.js";
-import deBortoliBanner from "../../assets/brandimages/de-bortoli-banner.jpg";
+import deBortoliBanner from "../../assets/brandimages/de-bortoil-banner.jpg";
 
 const BRAND_NAME = "De Bortoli";
 
@@ -73,18 +73,13 @@ export default function DeBortoli({
           IMAGE ONLY
       ======================================================== */}
 
-      <section className="w-full flex justify-center overflow-hidden pt-[115px]">
-        {" "}
-        <img
-          src={deBortoliBanner}
-          alt={BRAND_NAME}
-          className="block h-auto object-contain"
-          style={{
-            width: "min(100%, 1400px)",
-            height: "auto",
-          }}
-        />
-      </section>
+<section className="w-full overflow-hidden pt-[115px]">
+  <img
+    src={deBortoliBanner}
+    alt="De Bortoli"
+    className="block w-full h-auto object-contain"
+  />
+</section>
 
       {/* ========================================================
           ABOUT THE BRAND
@@ -92,8 +87,7 @@ export default function DeBortoli({
 
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
         <div className="max-w-container-max mx-auto">
-          <div className="max-w-4xl">
-            <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
+<div className="max-w-4xl mx-auto text-center">            <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
 
