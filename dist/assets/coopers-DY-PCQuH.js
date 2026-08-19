@@ -1,0 +1,1 @@
+import{j as o}from"./index-lFBpKeE-.js";import{P as s}from"./PageHero-C888qKZd.js";import"./Reveal-grDTu0rV.js";const e="Coopers";function a({onBack:r}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(s,{onBack:r,tag:"Brand",title:e,description:`The ${e} collection is coming soon.`})})}export{a as default};

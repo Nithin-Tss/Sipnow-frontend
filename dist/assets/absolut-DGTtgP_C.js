@@ -1,0 +1,1 @@
+import{j as o}from"./index-lFBpKeE-.js";import{P as e}from"./PageHero-C888qKZd.js";import"./Reveal-grDTu0rV.js";const t="Absolut";function a({onBack:s}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(e,{onBack:s,tag:"Brand",title:t,description:`The ${t} collection is coming soon.`})})}export{a as default};

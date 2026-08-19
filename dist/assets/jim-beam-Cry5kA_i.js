@@ -1,0 +1,1 @@
+import{j as e}from"./index-lFBpKeE-.js";import{P as i}from"./PageHero-C888qKZd.js";import"./Reveal-grDTu0rV.js";const o="Jim Beam";function m({onBack:t}){return e.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:e.jsx(i,{onBack:t,tag:"Brand",title:o,description:`The ${o} collection is coming soon.`})})}export{m as default};

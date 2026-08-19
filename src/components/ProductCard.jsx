@@ -320,7 +320,10 @@ export default function ProductCard({
            * ======================================================
            */
 
-          <div className="flex flex-col gap-3 rounded-lg border border-primary/20 bg-surface-container-high p-3.5 animate-[fadeIn_0.2s_ease-out] h-full justify-between overflow-y-auto scrollbar-hide">
+          <div
+            className="flex flex-col gap-3 rounded-lg border border-primary/20 bg-surface-container-high p-3.5 animate-[fadeIn_0.2s_ease-out] h-full justify-between overflow-y-auto scrollbar-hide"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Product name + close */}
             <div className="flex items-start justify-between gap-2">
               <p className="text-xs font-medium text-on-surface line-clamp-2 pr-1">
