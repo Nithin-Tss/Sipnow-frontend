@@ -1,1 +1,0 @@
-import{j as o}from"./index-Ce3p95UL.js";import{P as n}from"./PageHero-BtdJFlKA.js";import"./Reveal-B983_QIK.js";const t="Suntory";function a({onBack:r}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(n,{onBack:r,tag:"Brand",title:t,description:`The ${t} collection is coming soon.`})})}export{a as default};
