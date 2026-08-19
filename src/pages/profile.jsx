@@ -11,10 +11,7 @@ import {
   setDefaultAddress,
   upsertAddress,
 } from "../utils/addressStorage.js";
-import {
-  AUSTRALIAN_MOBILE_PATTERN,
-  NAME_PART_PATTERN,
-} from "../utils/validation.js";
+import { AUSTRALIAN_MOBILE_PATTERN, NAME_PART_PATTERN } from "../utils/validation.js";
 import { validateEmail } from "../utils/emailValidation.js";
 
 const ADDRESS_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./#-]{10,100}$/;
@@ -204,8 +201,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       [name]: cleanedValue,
     }));
 
-    if (fieldErrors[name])
-      setFieldErrors((current) => ({ ...current, [name]: "" }));
+    if (fieldErrors[name]) setFieldErrors((current) => ({ ...current, [name]: "" }));
 
     if (profileNotice) {
       setProfileNotice(null);
@@ -231,13 +227,11 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
     }
 
     if (!AUSTRALIAN_MOBILE_PATTERN.test(values.mobile)) {
-      nextErrors.mobile =
-        "Enter a valid Australian mobile number beginning with 4.";
+      nextErrors.mobile = "Enter a valid Australian mobile number beginning with 4.";
     }
 
     if (values.address && !ADDRESS_PATTERN.test(values.address.trim())) {
-      nextErrors.address =
-        "Enter a street address with a building or street number.";
+      nextErrors.address = "Enter a street address with a building or street number.";
     }
 
     /*
@@ -341,12 +335,12 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       address
         ? { ...address }
         : {
-            id: null,
-            label: "",
-            address: "",
-            city: "",
-            isDefault: addresses.length === 0,
-          }
+          id: null,
+          label: "",
+          address: "",
+          city: "",
+          isDefault: addresses.length === 0,
+        }
     );
   };
 
@@ -439,7 +433,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       <PageHero onBack={onBack ?? (() => navigate("/"))} tag="Shopping" />
 
       <Reveal>
-        <main className="mx-auto mt-8 max-w-6xl px-margin-mobile md:px-margin-desktop">
+        <main className="mx-auto mt-8 max-w-7xl px-margin-mobile md:px-margin-desktop">
           <section className="overflow-hidden rounded-3xl border border-white/10 bg-[#1d1b1f] shadow-2xl shadow-black/20">
             {/* PROFILE HEADER */}
             <div className="relative overflow-hidden border-b border-white/10 px-6 py-7 sm:px-8 sm:py-8 lg:px-10">
@@ -552,11 +546,10 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                                   ? "address-level2"
                                   : name
                         }
-                        className={`w-full rounded-xl border bg-[#242326] px-4 py-3.5 text-sm text-white placeholder:text-gray-500 outline-none transition-all duration-200 ${
-                          fieldErrors[name]
+                        className={`w-full rounded-xl border bg-[#242326] px-4 py-3.5 text-sm text-white placeholder:text-gray-500 outline-none transition-all duration-200 ${fieldErrors[name]
                             ? "border-error/70 focus:border-error focus:ring-2 focus:ring-error/10"
                             : "border-white/10 hover:border-white/20 focus:border-primary/70 focus:bg-[#29282b] focus:ring-4 focus:ring-primary/10"
-                        }`}
+                          }`}
                         inputMode={name === "mobile" ? "numeric" : undefined}
                         maxLength={name === "mobile" ? 9 : undefined}
                         name={name}
@@ -584,9 +577,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                         </p>
                       )}
                       {fieldErrors[name] && (
-                        <p className="mt-2 text-xs text-error">
-                          {fieldErrors[name]}
-                        </p>
+                        <p className="mt-2 text-xs text-error">{fieldErrors[name]}</p>
                       )}
                     </label>
                   ))}
@@ -693,28 +684,25 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
           {/* PROFILE SUCCESS / INFO MESSAGE */}
           {profileNotice && (
             <div
-              className={`mt-4 flex items-center gap-3 rounded-xl border px-4 py-3 ${
-                profileNotice.tone === "success"
+              className={`mt-4 flex items-center gap-3 rounded-xl border px-4 py-3 ${profileNotice.tone === "success"
                   ? "border-green-500/20 bg-green-500/10"
                   : "border-primary/20 bg-primary/10"
-              }`}
+                }`}
             >
               <span
-                className={`material-symbols-outlined text-[19px] ${
-                  profileNotice.tone === "success"
+                className={`material-symbols-outlined text-[19px] ${profileNotice.tone === "success"
                     ? "text-green-400"
                     : "text-primary"
-                }`}
+                  }`}
               >
                 {profileNotice.tone === "success" ? "check_circle" : "info"}
               </span>
 
               <p
-                className={`text-sm ${
-                  profileNotice.tone === "success"
+                className={`text-sm ${profileNotice.tone === "success"
                     ? "text-green-300"
                     : "text-primary"
-                }`}
+                  }`}
               >
                 {profileNotice.text}
               </p>
@@ -725,7 +713,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
 
       {/* SAVED ADDRESSES */}
       <Reveal delay={80}>
-        <section className="mx-auto mt-6 max-w-6xl px-margin-mobile md:px-margin-desktop">
+        <section className="mx-auto mt-6 max-w-7xl px-margin-mobile md:px-margin-desktop">
           <div className="glass-panel rounded-2xl p-6 sm:p-8 lg:p-10">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -899,7 +887,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
 
       {/* WISHLIST */}
       <Reveal delay={140}>
-        <section className="mx-auto mt-6 max-w-6xl px-margin-mobile md:px-margin-desktop">
+        <section className="mx-auto mt-6 max-w-7xl px-margin-mobile md:px-margin-desktop">
           <div className="glass-panel rounded-2xl p-6 sm:p-8 lg:p-10">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -928,13 +916,8 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
             </div>
 
             {wishlistNotice && (
-              <div
-                className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300"
-                role="status"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  check_circle
-                </span>
+              <div className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300" role="status">
+                <span className="material-symbols-outlined text-[18px]">check_circle</span>
                 {wishlistNotice}
               </div>
             )}
@@ -955,10 +938,9 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                     <div className="min-w-0 flex-1">
                       <Link
                         className="block truncate font-medium transition-colors hover:text-primary"
-                        to={`/product/${
-                          product.slug ??
+                        to={`/product/${product.slug ??
                           product.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")
-                        }`}
+                          }`}
                       >
                         {product.name}
                       </Link>
@@ -973,10 +955,6 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-error/20 bg-error/5 text-error transition-all duration-200 hover:border-error/40 hover:bg-error/10"
                       onClick={() => {
                         toggleWishlist(product);
-                        setProfileNotice({
-                          tone: "success",
-                          text: `${product.name} has been removed from your wishlist.`,
-                        });
                       }}
                       title={`Remove ${product.name} from wishlist`}
                       type="button"
@@ -1004,19 +982,32 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       </Reveal>
 
       {/* ORDER HISTORY */}
-      <section className="glass-panel mx-auto mt-6 max-w-6xl rounded-2xl p-6 sm:p-8">
-        <h2 className="font-headline-md text-2xl">Order history</h2>
+      <section className="mx-auto mt-6 max-w-7xl px-margin-mobile md:px-margin-desktop">
+        <div className="glass-panel rounded-2xl p-6 sm:p-8 lg:p-10">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
 
-        <p className="mt-2 text-sm text-on-surface-variant">
-          View previous purchases and open individual order details.
-        </p>
-        <button
-          className="mt-5 rounded-lg px-5 py-2 text-sm text-white primary-gradient"
-          onClick={() => navigate("/order-history")}
-          type="button"
-        >
-          View order history
-        </button>
+            {/* Heading + Description */}
+            <div>
+              <h2 className="font-headline-md text-2xl">
+                Order history
+              </h2>
+
+              <p className="mt-2 text-sm text-on-surface-variant">
+                View previous purchases and open individual order details.
+              </p>
+            </div>
+
+            {/* Button */}
+            <button
+              className="rounded-lg px-5 py-2 text-sm text-white primary-gradient"
+              onClick={() => navigate("/order-history")}
+              type="button"
+            >
+              View order history
+            </button>
+
+          </div>
+        </div>
       </section>
     </div>
   );

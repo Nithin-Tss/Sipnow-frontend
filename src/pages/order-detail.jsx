@@ -14,11 +14,7 @@ function readOrder(orderNumber, user) {
     const orders = JSON.parse(window.localStorage.getItem("sipnow-orders"));
 
     return Array.isArray(orders)
-      ? orders.find(
-          (order) =>
-            order.orderNumber === orderNumber &&
-            order.customer?.email?.toLowerCase() === user?.email?.toLowerCase()
-        )
+      ? orders.find((order) => order.orderNumber === orderNumber && order.customer?.email?.toLowerCase() === user?.email?.toLowerCase())
       : null;
   } catch {
     return null;
@@ -27,9 +23,7 @@ function readOrder(orderNumber, user) {
 
 function formatOrderId(orderNumber) {
   if (String(orderNumber ?? "").startsWith("#")) return orderNumber;
-  const digits = String(orderNumber ?? "")
-    .replace(/\D/g, "")
-    .slice(-5);
+  const digits = String(orderNumber ?? "").replace(/\D/g, "").slice(-5);
   return digits ? `#${digits.padStart(5, "0")}` : "#00000";
 }
 
@@ -50,7 +44,7 @@ export default function OrderDetail({ user }) {
         />
 
         <Reveal>
-          <main className="mx-auto mt-10 max-w-3xl px-margin-mobile md:px-margin-desktop">
+          <main className="mx-auto mt-10 max-w-7xl px-margin-mobile md:px-margin-desktop">
             <section className="glass-panel rounded-2xl p-8 text-center">
               <span className="material-symbols-outlined text-5xl text-primary">
                 receipt_long
@@ -73,19 +67,8 @@ export default function OrderDetail({ user }) {
   const address = formatAddress(order.deliveryAddress);
   const cancelOrder = () => {
     if (order.status === "CANCELLED") return;
-    const orders = JSON.parse(
-      window.localStorage.getItem("sipnow-orders") ?? "[]"
-    );
-    window.localStorage.setItem(
-      "sipnow-orders",
-      JSON.stringify(
-        orders.map((item) =>
-          item.orderNumber === order.orderNumber
-            ? { ...item, status: "CANCELLED" }
-            : item
-        )
-      )
-    );
+    const orders = JSON.parse(window.localStorage.getItem("sipnow-orders") ?? "[]");
+    window.localStorage.setItem("sipnow-orders", JSON.stringify(orders.map((item) => item.orderNumber === order.orderNumber ? { ...item, status: "CANCELLED" } : item)));
     setOrder((current) => ({ ...current, status: "CANCELLED" }));
     setNotice(`Order ${formatOrderId(order.orderNumber)} has been cancelled.`);
   };
@@ -99,7 +82,7 @@ export default function OrderDetail({ user }) {
       />
 
       <Reveal>
-        <main className="mx-auto mt-10 max-w-3xl px-margin-mobile md:px-margin-desktop">
+        <main className="mx-auto mt-10 max-w-[1320px] px-margin-mobile md:px-margin-desktop">
           <section className="glass-panel rounded-2xl p-6 sm:p-8">
             {/* ORDER HEADER */}
             <div className="flex flex-wrap items-start justify-between gap-4">
@@ -121,26 +104,8 @@ export default function OrderDetail({ user }) {
                 {order.status?.replaceAll("_", " ") ?? "Created"}
               </span>
             </div>
-            {notice && (
-              <div
-                className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300"
-                role="status"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  check_circle
-                </span>
-                {notice}
-              </div>
-            )}
-            {order.status !== "CANCELLED" && (
-              <button
-                className="mt-5 rounded-lg border border-error/40 px-4 py-2 text-sm text-error hover:bg-error/10"
-                onClick={cancelOrder}
-                type="button"
-              >
-                Cancel order
-              </button>
-            )}
+            {notice && <div className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300" role="status"><span className="material-symbols-outlined text-[18px]">check_circle</span>{notice}</div>}
+            {order.status !== "CANCELLED" && <button className="mt-5 rounded-lg border border-error/40 px-4 py-2 text-sm text-error hover:bg-error/10" onClick={cancelOrder} type="button">Cancel order</button>}
 
             {/* ORDER INFORMATION */}
             <div className="mt-6 grid gap-4 border-t border-primary/10 pt-6 sm:grid-cols-2">
