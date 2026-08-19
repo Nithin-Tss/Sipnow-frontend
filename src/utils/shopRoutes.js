@@ -96,6 +96,7 @@ export function getMenuItemRoute(menuLabel, columnHeading, item) {
     return `/zero-alcohol/${sub}`;
   }
 
+<<<<<<< HEAD
 if (menuLabel === "Brands") {
   switch (item.toLowerCase().trim()) {
     case "johnnie walker":
@@ -122,6 +123,34 @@ if (menuLabel === "Brands") {
 }
 
 return `/${slugify(menuLabel)}/${itemSlug}`;
+=======
+  if (menuLabel === "Brands") {
+    switch (item.toLowerCase().trim()) {
+      case "johnnie walker":
+        return "/brands/johnnie-walker";
+
+      case "jacob's creek":
+        return "/brands/jacob-s-creek";
+
+      case "suntory":
+        return "/brands/suntory";
+
+      case "absolut":
+        return "/brands/absolut";
+
+      case "wild turkey":
+        return "/brands/wild-turkey";
+
+      case "bundaberg rum":
+        return "/brands/bundaberg-rum";
+
+      default:
+        return `/brands/${itemSlug}`;
+    }
+  }
+
+  return `/${slugify(menuLabel)}/${itemSlug}`;
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
 
   // return `/${slugify(menuLabel)}/${itemSlug}`;
 }

@@ -1,0 +1,1 @@
+import{j as o}from"./index-DVy11dJB.js";import{P as t}from"./PageHero-DxXxKL1p.js";import"./Reveal-n9I9egdM.js";const r="Hardys";function a({onBack:s}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(t,{onBack:s,tag:"Brand",title:r,description:`The ${r} collection is coming soon.`})})}export{a as default};

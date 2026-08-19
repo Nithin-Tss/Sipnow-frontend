@@ -1,0 +1,1 @@
+import{j as e}from"./index-DVy11dJB.js";import{P as t}from"./PageHero-DxXxKL1p.js";import"./Reveal-n9I9egdM.js";const o="19 Crimes";function m({onBack:r}){return e.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:e.jsx(t,{onBack:r,tag:"Brand",title:o,description:`The ${o} collection is coming soon.`})})}export{m as default};

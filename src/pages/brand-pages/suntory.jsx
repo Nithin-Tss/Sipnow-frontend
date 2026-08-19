@@ -13,6 +13,7 @@ export default function Suntory({
   productsLoading = false,
   onAddToCart,
 }) {
+<<<<<<< HEAD
   const { addedProduct, handleAddToCart } =
     useAddToCartFeedback(onAddToCart);
 
@@ -21,6 +22,13 @@ export default function Suntory({
       const brand = String(
         product.brand || product.brandName || ""
       )
+=======
+  const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
+
+  const brandProducts = useMemo(() => {
+    return products.filter((product) => {
+      const brand = String(product.brand || product.brandName || "")
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
         .trim()
         .toLowerCase();
 
@@ -28,10 +36,14 @@ export default function Suntory({
         .trim()
         .toLowerCase();
 
+<<<<<<< HEAD
       return (
         brand === "suntory" ||
         name.includes("suntory")
       );
+=======
+      return brand === "suntory" || name.includes("suntory");
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
     });
   }, [products]);
 
@@ -39,6 +51,7 @@ export default function Suntory({
     return [...brandProducts]
       .sort(
         (a, b) =>
+<<<<<<< HEAD
           Number(
             b.salesCount ||
               b.soldCount ||
@@ -51,27 +64,41 @@ export default function Suntory({
               a.unitsSold ||
               0
           )
+=======
+          Number(b.salesCount || b.soldCount || b.unitsSold || 0) -
+          Number(a.salesCount || a.soldCount || a.unitsSold || 0)
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
       )
       .slice(0, 6);
   }, [brandProducts]);
 
   const bestRatedProducts = useMemo(() => {
     return [...brandProducts]
+<<<<<<< HEAD
       .sort(
         (a, b) =>
           Number(b.rating || 0) -
           Number(a.rating || 0)
       )
+=======
+      .sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0))
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
       .slice(0, 6);
   }, [brandProducts]);
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
+<<<<<<< HEAD
 
       {/* BRAND BANNER */}
 
       <section className="relative w-full min-h-[560px] md:min-h-[720px] overflow-hidden">
 
+=======
+      {/* BRAND BANNER */}
+
+      <section className="relative w-full min-h-[560px] md:min-h-[720px] overflow-hidden">
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
         <img
           src={suntoryBanner}
           alt="Suntory"
@@ -79,17 +106,25 @@ export default function Suntory({
         />
 
         <div className="absolute inset-0 bg-black/30" />
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
       </section>
 
       {/* ABOUT THE BRAND */}
 
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
+<<<<<<< HEAD
 
         <div className="max-w-container-max mx-auto">
 
           <div className="max-w-4xl">
 
+=======
+        <div className="max-w-container-max mx-auto">
+          <div className="max-w-4xl">
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
@@ -99,6 +134,7 @@ export default function Suntory({
             </h2>
 
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
+<<<<<<< HEAD
               Explore the Suntory collection, known for its
               exceptional Japanese craftsmanship and dedication
               to quality. Discover carefully crafted spirits that
@@ -110,11 +146,21 @@ export default function Suntory({
 
         </div>
 
+=======
+              Explore the Suntory collection, known for its exceptional Japanese
+              craftsmanship and dedication to quality. Discover carefully
+              crafted spirits that reflect generations of expertise, precision
+              and distinctive character.
+            </p>
+          </div>
+        </div>
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
       </section>
 
       {/* BEST SELLING PRODUCTS */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
+<<<<<<< HEAD
 
         <div className="max-w-container-max mx-auto">
 
@@ -122,6 +168,11 @@ export default function Suntory({
 
             <div>
 
+=======
+        <div className="max-w-container-max mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+            <div>
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
               <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
                 Suntory
               </p>
@@ -133,6 +184,7 @@ export default function Suntory({
               <p className="mt-3 text-sm md:text-base text-on-surface-variant">
                 Discover the most popular Suntory products.
               </p>
+<<<<<<< HEAD
 
             </div>
 
@@ -148,12 +200,23 @@ export default function Suntory({
 
           ) : bestSellingProducts.length > 0 ? (
 
+=======
+            </div>
+          </div>
+
+          {productsLoading ? (
+            <div className="min-h-[200px] flex items-center justify-center">
+              <p className="text-on-surface-variant">Loading products...</p>
+            </div>
+          ) : bestSellingProducts.length > 0 ? (
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={bestSellingProducts}
               emptyMessage=""
             />
+<<<<<<< HEAD
 
           ) : (
 
@@ -161,6 +224,11 @@ export default function Suntory({
 
               <div className="text-center max-w-lg">
 
+=======
+          ) : (
+            <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
+              <div className="text-center max-w-lg">
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   trending_up
                 </span>
@@ -170,6 +238,7 @@ export default function Suntory({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
+<<<<<<< HEAD
                   Best selling Suntory products will appear
                   here once product sales data is available.
                 </p>
@@ -182,11 +251,21 @@ export default function Suntory({
 
         </div>
 
+=======
+                  Best selling Suntory products will appear here once product
+                  sales data is available.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
       </section>
 
       {/* BEST RATED PRODUCTS */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
+<<<<<<< HEAD
 
         <div className="max-w-container-max mx-auto">
 
@@ -194,6 +273,11 @@ export default function Suntory({
 
             <div>
 
+=======
+        <div className="max-w-container-max mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+            <div>
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
               <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
                 Suntory
               </p>
@@ -205,6 +289,7 @@ export default function Suntory({
               <p className="mt-3 text-sm md:text-base text-on-surface-variant">
                 Explore the highest-rated Suntory products.
               </p>
+<<<<<<< HEAD
 
             </div>
 
@@ -220,12 +305,23 @@ export default function Suntory({
 
           ) : bestRatedProducts.length > 0 ? (
 
+=======
+            </div>
+          </div>
+
+          {productsLoading ? (
+            <div className="min-h-[200px] flex items-center justify-center">
+              <p className="text-on-surface-variant">Loading products...</p>
+            </div>
+          ) : bestRatedProducts.length > 0 ? (
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={bestRatedProducts}
               emptyMessage=""
             />
+<<<<<<< HEAD
 
           ) : (
 
@@ -233,6 +329,11 @@ export default function Suntory({
 
               <div className="text-center max-w-lg">
 
+=======
+          ) : (
+            <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
+              <div className="text-center max-w-lg">
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   star
                 </span>
@@ -242,6 +343,7 @@ export default function Suntory({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
+<<<<<<< HEAD
                   Best rated Suntory products will appear
                   here once product ratings are available.
                 </p>
@@ -254,16 +356,30 @@ export default function Suntory({
 
         </div>
 
+=======
+                  Best rated Suntory products will appear here once product
+                  ratings are available.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
       </section>
 
       {/* ALL BRAND PRODUCTS */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-24">
+<<<<<<< HEAD
 
         <div className="max-w-container-max mx-auto">
 
           <div className="mb-8">
 
+=======
+        <div className="max-w-container-max mx-auto">
+          <div className="mb-8">
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
               Our Collection
             </p>
@@ -271,17 +387,24 @@ export default function Suntory({
             <h2 className="font-serif text-3xl md:text-4xl text-on-surface">
               All Suntory Products
             </h2>
+<<<<<<< HEAD
 
           </div>
 
           {brandProducts.length > 0 ? (
 
+=======
+          </div>
+
+          {brandProducts.length > 0 ? (
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={brandProducts}
               emptyMessage=""
             />
+<<<<<<< HEAD
 
           ) : (
 
@@ -289,6 +412,11 @@ export default function Suntory({
 
               <div className="text-center max-w-lg">
 
+=======
+          ) : (
+            <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
+              <div className="text-center max-w-lg">
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   liquor
                 </span>
@@ -298,6 +426,7 @@ export default function Suntory({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
+<<<<<<< HEAD
                   Suntory products will appear here once they
                   are available in our collection.
                 </p>
@@ -312,6 +441,16 @@ export default function Suntory({
 
       </section>
 
+=======
+                  Suntory products will appear here once they are available in
+                  our collection.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+>>>>>>> 7ac3b83d75dc675d9578284be9e6323326364039
     </div>
   );
 }
