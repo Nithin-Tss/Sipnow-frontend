@@ -1,0 +1,1 @@
+import{j as e}from"./index-Ce3p95UL.js";import{P as n}from"./PageHero-BtdJFlKA.js";import"./Reveal-B983_QIK.js";const o="Bundaberg Rum";function a({onBack:r}){return e.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:e.jsx(n,{onBack:r,tag:"Brand",title:o,description:`The ${o} collection is coming soon.`})})}export{a as default};

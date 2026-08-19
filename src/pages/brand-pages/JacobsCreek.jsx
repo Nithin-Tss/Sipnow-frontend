@@ -85,35 +85,12 @@ export default function JacobsCreek({
           BRAND BANNER
       ======================================================== */}
 
-      <section className="relative w-full min-h-[420px] md:min-h-[560px] overflow-hidden">
+      <section className="relative w-full min-h-[500px] md:min-h-[740px] overflow-hidden">
         <img
           src={jacobsCreekBanner}
           alt={BRAND_NAME}
           className="absolute inset-0 w-full h-full object-cover"
         />
-
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/45" />
-
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-transparent" />
-
-        {/* Brand content */}
-        <div className="relative z-10 min-h-[420px] md:min-h-[560px] flex items-center">
-          <div className="w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-            <div className="max-w-4xl">
-              <h1 className="font-serif text-5xl md:text-7xl text-on-surface">
-                {BRAND_NAME}
-              </h1>
-
-              <p className="mt-6 max-w-3xl text-lg md:text-xl leading-relaxed text-on-surface-variant">
-                Discover Jacob's Creek wines, bringing together quality,
-                craftsmanship and distinctive Australian character for every
-                occasion.
-              </p>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* ========================================================
@@ -122,7 +99,7 @@ export default function JacobsCreek({
 
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
         <div className="max-w-container-max mx-auto">
-          <div className="max-w-4xl">
+          <div className="max-w-4xl mx-auto text-center">
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
