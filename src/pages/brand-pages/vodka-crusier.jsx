@@ -10,8 +10,7 @@ export default function VodkaCruiser({
   productsLoading = false,
   onAddToCart,
 }) {
-  const { addedProduct, handleAddToCart } =
-    useAddToCartFeedback(onAddToCart);
+  const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
 
   // ============================================================
   // VODKA CRUISER PRODUCTS
@@ -19,9 +18,7 @@ export default function VodkaCruiser({
 
   const brandProducts = useMemo(() => {
     return products.filter((product) => {
-      const brand = String(
-        product.brand || product.brandName || ""
-      )
+      const brand = String(product.brand || product.brandName || "")
         .trim()
         .toLowerCase();
 
@@ -46,18 +43,8 @@ export default function VodkaCruiser({
     return [...brandProducts]
       .sort(
         (a, b) =>
-          Number(
-            b.salesCount ||
-              b.soldCount ||
-              b.unitsSold ||
-              0
-          ) -
-          Number(
-            a.salesCount ||
-              a.soldCount ||
-              a.unitsSold ||
-              0
-          )
+          Number(b.salesCount || b.soldCount || b.unitsSold || 0) -
+          Number(a.salesCount || a.soldCount || a.unitsSold || 0)
       )
       .slice(0, 6);
   }, [brandProducts]);
@@ -68,23 +55,17 @@ export default function VodkaCruiser({
 
   const bestRatedProducts = useMemo(() => {
     return [...brandProducts]
-      .sort(
-        (a, b) =>
-          Number(b.rating || 0) -
-          Number(a.rating || 0)
-      )
+      .sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0))
       .slice(0, 6);
   }, [brandProducts]);
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
-
       {/* ========================================================
           BRAND BANNER
       ======================================================== */}
 
       <section className="relative w-full min-h-[420px] md:min-h-[560px] overflow-hidden">
-
         <img
           src={vodkaCruiserBanner}
           alt={BRAND_NAME}
@@ -94,7 +75,6 @@ export default function VodkaCruiser({
         <div className="absolute inset-0 bg-black/30" />
 
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
-
       </section>
 
       {/* ========================================================
@@ -102,11 +82,8 @@ export default function VodkaCruiser({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
-
         <div className="max-w-container-max mx-auto">
-
           <div className="max-w-4xl">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
@@ -116,20 +93,16 @@ export default function VodkaCruiser({
             </h2>
 
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Discover the Vodka Cruiser collection, featuring
-              refreshing vodka-based drinks blended with
-              delicious fruit flavours.
+              Discover the Vodka Cruiser collection, featuring refreshing
+              vodka-based drinks blended with delicious fruit flavours.
             </p>
 
             <p className="mt-4 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Explore the colourful Vodka Cruiser range and
-              discover your favourite flavour.
+              Explore the colourful Vodka Cruiser range and discover your
+              favourite flavour.
             </p>
-
           </div>
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -137,11 +110,8 @@ export default function VodkaCruiser({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
-
         <div className="max-w-container-max mx-auto">
-
           <div className="mb-8">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
               {BRAND_NAME}
             </p>
@@ -153,40 +123,27 @@ export default function VodkaCruiser({
             <p className="mt-3 text-sm md:text-base text-on-surface-variant">
               Discover the most popular Vodka Cruiser products.
             </p>
-
           </div>
 
           {productsLoading ? (
-
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
-
           ) : bestSellingProducts.length > 0 ? (
-
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={bestSellingProducts}
               emptyMessage=""
             />
-
           ) : (
-
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[200px] flex items-center justify-center">
-
               <p className="text-on-surface-variant">
                 No best selling Vodka Cruiser products available.
               </p>
-
             </div>
-
           )}
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -194,11 +151,8 @@ export default function VodkaCruiser({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
-
         <div className="max-w-container-max mx-auto">
-
           <div className="mb-8">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
               {BRAND_NAME}
             </p>
@@ -210,40 +164,27 @@ export default function VodkaCruiser({
             <p className="mt-3 text-sm md:text-base text-on-surface-variant">
               Explore the highest-rated Vodka Cruiser products.
             </p>
-
           </div>
 
           {productsLoading ? (
-
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
-
           ) : bestRatedProducts.length > 0 ? (
-
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={bestRatedProducts}
               emptyMessage=""
             />
-
           ) : (
-
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[200px] flex items-center justify-center">
-
               <p className="text-on-surface-variant">
                 No best rated Vodka Cruiser products available.
               </p>
-
             </div>
-
           )}
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -251,11 +192,8 @@ export default function VodkaCruiser({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-24">
-
         <div className="max-w-container-max mx-auto">
-
           <div className="mb-8">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
               Our Collection
             </p>
@@ -263,24 +201,18 @@ export default function VodkaCruiser({
             <h2 className="font-serif text-3xl md:text-4xl text-on-surface">
               All Vodka Cruiser Products
             </h2>
-
           </div>
 
           {brandProducts.length > 0 ? (
-
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={brandProducts}
               emptyMessage=""
             />
-
           ) : (
-
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   local_bar
                 </span>
@@ -290,20 +222,14 @@ export default function VodkaCruiser({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Vodka Cruiser products will appear here once
-                  they are available in our collection.
+                  Vodka Cruiser products will appear here once they are
+                  available in our collection.
                 </p>
-
               </div>
-
             </div>
-
           )}
-
         </div>
-
       </section>
-
     </div>
   );
 }

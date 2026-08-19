@@ -122,6 +122,4 @@ export function getMenuItemRoute(menuLabel, columnHeading, item) {
   }
 
   return `/${slugify(menuLabel)}/${itemSlug}`;
-
-  // return `/${slugify(menuLabel)}/${itemSlug}`;
 }

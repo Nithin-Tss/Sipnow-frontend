@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import ProductGrid from "../../components/ProductGrid.jsx";
 import { useAddToCartFeedback } from "../../hooks/useAddToCartFeedback.js";
-import crimesBanner from "../../assets/brandimages/19-Crimes-banner.jpg";
+import crimesBanner from "../../assets/brandimages/19-crimes-banner.jpg";
 
 const BRAND_NAME = "19 Crimes";
 

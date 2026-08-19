@@ -63,7 +63,7 @@ export default function Bundaberg({
 
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
         <div className="max-w-container-max mx-auto">
-          <div className="max-w-4xl">
+          <div className="max-w-4xl mx-auto text-center">
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
