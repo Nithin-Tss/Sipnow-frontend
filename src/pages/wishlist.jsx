@@ -6,7 +6,7 @@ import { useAddToCartFeedback } from "../hooks/useAddToCartFeedback.js";
 import { useWishlist } from "../context/useWishlist.js";
 
 export default function Wishlist({ onAddToCart, onBack, onShopAll }) {
-  const { wishlistItems } = useWishlist();
+  const { wishlistItems, wishlistNotice } = useWishlist();
 
   const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
 
@@ -27,6 +27,7 @@ export default function Wishlist({ onAddToCart, onBack, onShopAll }) {
       />
 
       <Reveal className="mx-auto max-w-container-max px-margin-mobile md:px-margin-desktop">
+        {wishlistNotice && <div className="mb-5 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300" role="status">{wishlistNotice}</div>}
         {wishlistItems.length === 0 ? (
           <div className="glass-panel rounded-2xl px-6 py-20 text-center sm:px-10">
             <span className="material-symbols-outlined text-6xl text-on-surface-variant">

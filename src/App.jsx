@@ -26,6 +26,7 @@ const ContactUs = lazy(() => import("./pages/contact-us.jsx"));
 const ShippingPolicy = lazy(() => import("./pages/shipping-policy.jsx"));
 const ReturnsRefunds = lazy(() => import("./pages/returns-refunds.jsx"));
 const TermsConditions = lazy(() => import("./pages/terms-conditions.jsx"));
+const PrivacyPolicy = lazy(() => import("./pages/privacy-policy.jsx"));
 const Auth = lazy(() => import("./pages/auth.jsx"));
 const BestSellersPage = lazy(() => import("./pages/best-sellers.jsx"));
 const Cart = lazy(() => import("./pages/cart.jsx"));
@@ -35,6 +36,7 @@ const Home = lazy(() => import("./pages/home.jsx"));
 const PasswordReset = lazy(() => import("./pages/password-reset.jsx"));
 const ProductDetail = lazy(() => import("./pages/product-detail.jsx"));
 const OrderDetail = lazy(() => import("./pages/order-detail.jsx"));
+const OrderHistory = lazy(() => import("./pages/order-history.jsx"));
 const Profile = lazy(() => import("./pages/profile.jsx"));
 const SearchResults = lazy(() => import("./pages/search-results.jsx"));
 const Wishlist = lazy(() => import("./pages/wishlist.jsx"));
@@ -155,10 +157,12 @@ export default function App() {
   const [cartItems, setCartItems] = useState(() =>
     normalizeStoredCart(readStored("sipnow-cart", []))
   );
-  const [wishlistItems, setWishlistItems] = useState(() =>
-    readStored("sipnow-wishlist", [])
-  );
   const [user, setUser] = useState(() => readStored("sipnow-session", null));
+  const [wishlistItems, setWishlistItems] = useState(() => {
+    const session = readStored("sipnow-session", null);
+    return session?.email ? readStored(`sipnow-wishlist:${session.email.toLowerCase()}`, []) : [];
+  });
+  const [wishlistNotice, setWishlistNotice] = useState(null);
   const [authDestination, setAuthDestination] = useState("profile");
   const { products, loading: productsLoading } = useProducts();
 
@@ -177,11 +181,19 @@ export default function App() {
 
   // Persist wishlist changes so it survives a page refresh.
   useEffect(() => {
-    window.localStorage.setItem(
-      "sipnow-wishlist",
-      JSON.stringify(wishlistItems)
-    );
-  }, [wishlistItems]);
+    if (user?.email) {
+      window.localStorage.setItem(
+        `sipnow-wishlist:${user.email.toLowerCase()}`,
+        JSON.stringify(wishlistItems)
+      );
+    }
+  }, [user?.email, wishlistItems]);
+
+  useEffect(() => {
+    if (!wishlistNotice) return undefined;
+    const timer = window.setTimeout(() => setWishlistNotice(null), 3500);
+    return () => window.clearTimeout(timer);
+  }, [wishlistNotice]);
 
   const goHome = () => {
     navigate("/");
@@ -302,12 +314,19 @@ export default function App() {
   const isWishlisted = (product) =>
     wishlistItems.some((item) => item.name === product.name);
 
-  const toggleWishlist = (product) =>
-    setWishlistItems((current) =>
-      current.some((item) => item.name === product.name)
-        ? current.filter((item) => item.name !== product.name)
-        : [...current, product]
-    );
+  const toggleWishlist = (product) => {
+    if (!user) {
+      setAuthDestination("wishlist");
+      navigate("/login", { state: { authNotice: "Please sign in or create an account to use your wishlist." } });
+      return false;
+    }
+    setWishlistItems((current) => {
+      const exists = current.some((item) => item.name === product.name);
+      if (exists) setWishlistNotice(`${product.name} has been removed from your wishlist.`);
+      return exists ? current.filter((item) => item.name !== product.name) : [...current, product];
+    });
+    return true;
+  };
 
   // Save the authenticated session without storing the password in App state.
   const authenticate = (nextUser) => {
@@ -317,6 +336,7 @@ export default function App() {
       email: nextUser.email,
       mobile: nextUser.mobile,
     });
+    setWishlistItems(readStored(`sipnow-wishlist:${nextUser.email.toLowerCase()}`, []));
     switchAuthPage(authDestination);
   };
 
@@ -343,6 +363,7 @@ export default function App() {
   const logout = () => {
     window.localStorage.removeItem("sipnow-session");
     setUser(null);
+    setWishlistItems([]);
     goHome();
   };
 
@@ -365,6 +386,7 @@ export default function App() {
     >
       <WishlistProvider
         wishlistItems={wishlistItems}
+        wishlistNotice={wishlistNotice}
         isWishlisted={isWishlisted}
         toggleWishlist={toggleWishlist}
       >
@@ -411,11 +433,7 @@ export default function App() {
               <Route
                 path="/wishlist"
                 element={
-                  <Wishlist
-                    onAddToCart={addToCart}
-                    onBack={goHome}
-                    onShopAll={() => navigate("/shop-all")}
-                  />
+                  user ? <Wishlist onAddToCart={addToCart} onBack={goHome} onShopAll={() => navigate("/shop-all")} /> : <Navigate replace to="/login" state={{ authNotice: "Please sign in or create an account to view your wishlist." }} />
                 }
               />
 
@@ -436,9 +454,10 @@ export default function App() {
               <Route
                 path="/orders/:orderNumber"
                 element={
-                  user ? <OrderDetail /> : <Navigate replace to="/login" />
+                  user ? <OrderDetail user={user} /> : <Navigate replace to="/login" />
                 }
               />
+              <Route path="/order-history" element={user ? <OrderHistory user={user} /> : <Navigate replace to="/login" />} />
               <Route
                 path="/profile"
                 element={
@@ -576,6 +595,7 @@ export default function App() {
                 path="/terms-conditions"
                 element={<TermsConditions onBack={goHome} />}
               />
+              <Route path="/privacy-policy" element={<PrivacyPolicy onBack={goHome} />} />
               <Route
                 path="/terms"
                 element={<Navigate replace to="/terms-conditions" />}

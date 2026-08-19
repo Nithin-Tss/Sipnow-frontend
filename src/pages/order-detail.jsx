@@ -8,23 +8,23 @@ import {
   parsePrice,
 } from "../utils/productHelpers.js";
 
-function readOrder(orderNumber) {
+function readOrder(orderNumber, user) {
   try {
     const orders = JSON.parse(window.localStorage.getItem("sipnow-orders"));
 
     return Array.isArray(orders)
-      ? orders.find((order) => order.orderNumber === orderNumber)
+      ? orders.find((order) => order.orderNumber === orderNumber && order.customer?.email?.toLowerCase() === user?.email?.toLowerCase())
       : null;
   } catch {
     return null;
   }
 }
 
-export default function OrderDetail() {
+export default function OrderDetail({ user }) {
   const navigate = useNavigate();
   const { orderNumber } = useParams();
 
-  const order = readOrder(orderNumber);
+  const order = readOrder(orderNumber, user);
 
   if (!order) {
     return (
@@ -57,6 +57,12 @@ export default function OrderDetail() {
   }
 
   const address = formatAddress(order.deliveryAddress);
+  const cancelOrder = () => {
+    if (order.status === "CANCELLED") return;
+    const orders = JSON.parse(window.localStorage.getItem("sipnow-orders") ?? "[]");
+    window.localStorage.setItem("sipnow-orders", JSON.stringify(orders.map((item) => item.orderNumber === order.orderNumber ? { ...item, status: "CANCELLED" } : item)));
+    navigate("/order-history");
+  };
 
   return (
     <div className="pt-36 pb-24 sm:pt-40 lg:pt-44">
@@ -89,6 +95,7 @@ export default function OrderDetail() {
                 {order.status?.replaceAll("_", " ") ?? "Created"}
               </span>
             </div>
+            {order.status !== "CANCELLED" && <button className="mt-5 rounded-lg border border-error/40 px-4 py-2 text-sm text-error hover:bg-error/10" onClick={cancelOrder} type="button">Cancel order</button>}
 
             {/* ORDER INFORMATION */}
             <div className="mt-6 grid gap-4 border-t border-primary/10 pt-6 sm:grid-cols-2">

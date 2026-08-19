@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AUSTRALIAN_MOBILE_PATTERN, isValidEmail, NAME_PART_PATTERN, PASSWORD_PATTERN } from "../utils/validation.js";
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const NAME_PART_PATTERN = /^[A-Za-z][A-Za-z '-]{1,49}$/;
-const PASSWORD_PATTERN =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
 const DEMO_OTP = "123456";
 const EMAIL_VERIFICATION_TTL = 10 * 60 * 1000;
 const MOBILE_VERIFICATION_TTL = 10 * 60 * 1000;
@@ -24,23 +21,6 @@ function takeAuthNotice() {
   window.localStorage.removeItem("sipnow-auth-error");
   if (error) return { tone: "error", text: error };
   return notice ? { tone: "success", text: notice } : null;
-}
-
-// SipNow currently accepts Australian mobile numbers. Keeping normalization in
-// one function makes replacing this rule with an international phone library easy.
-function normalizeMobile(value) {
-  return String(value ?? "")
-    .replace(/\D/g, "")
-    .replace(/^61/, "")
-    .replace(/^0/, "")
-    .slice(0, 9);
-}
-
-function getLoginChannel(identifier) {
-  const value = identifier.trim();
-  if (EMAIL_PATTERN.test(value)) return "email";
-  if (/^4\d{8}$/.test(normalizeMobile(value))) return "mobile";
-  return null;
 }
 
 function createDemoToken() {
@@ -170,12 +150,7 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
   const isSignup = mode === "signup";
   const navigate = useNavigate();
   const location = useLocation();
-  const [searchParams] = useSearchParams();
-  const loginToken = searchParams.get("loginToken");
-  const signupToken = searchParams.get("signupToken");
-  const [loginMethod, setLoginMethod] = useState("passwordless");
-  const [loginStage, setLoginStage] = useState("contact");
-  const [demoLoginLink, setDemoLoginLink] = useState("");
+  const signupToken = new URLSearchParams(location.search).get("signupToken");
   const [isRestartingSignup, setIsRestartingSignup] = useState(false);
   const [demoSignupLink, setDemoSignupLink] = useState(() => {
     const request = readStored("sipnow-signup-email-link");
@@ -190,7 +165,6 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     email: "",
     password: "",
     confirmPassword: "",
-    identifier: "",
     otp: "",
     termsAccepted: false,
   });
@@ -219,8 +193,6 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
   const signupMobileRequest = isSignup
     ? readStored("sipnow-signup-mobile-otp")
     : null;
-  const loginEmailRequest = !isSignup ? readStored("sipnow-login-link") : null;
-  const loginMobileRequest = !isSignup ? readStored("sipnow-login-otp") : null;
 
   const updateValue = (event) => {
     const { name, value, type, checked } = event.target;
@@ -229,10 +201,10 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     if (name === "firstName" || name === "lastName") {
       nextValue = value.replace(/[^A-Za-z '-]/g, "");
     }
-    if (name === "mobile") nextValue = normalizeMobile(value);
+    // Authentication accepts the canonical 4XXXXXXXX format only; do not
+    // silently turn punctuation or country codes into a valid credential.
+    if (name === "mobile") nextValue = value.slice(0, 9);
     if (name === "otp") nextValue = value.replace(/\D/g, "").slice(0, 6);
-
-    if (name === "identifier" && demoLoginLink) setDemoLoginLink("");
 
     setValues((current) => ({
       ...current,
@@ -248,38 +220,6 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     }
     if (message) setMessage(null);
   };
-
-  // A real email link returns here with its secure server-issued token. The
-  // localStorage branch is a temporary demo transport; replace it with an API
-  // verification call before using this in production.
-  useEffect(() => {
-    if (!loginToken || isSignup) return;
-
-    const request = readStored("sipnow-login-link");
-    const user = readStored("sipnow-user");
-    const isValid =
-      request?.token === loginToken &&
-      request?.expiresAt > Date.now() &&
-      user?.email === request.email;
-
-    if (isValid) {
-      window.localStorage.removeItem("sipnow-login-link");
-      window.localStorage.setItem("sipnow-session", JSON.stringify(user));
-      onAuthenticated(user);
-      navigate("/profile", { replace: true });
-      return;
-    }
-
-    // Carry the error through the redirect instead of setting React state
-    // synchronously from this route-synchronization effect.
-    navigate("/login", {
-      replace: true,
-      state: {
-        authError:
-          "This sign-in link is invalid or has expired. Please request a new one.",
-      },
-    });
-  }, [isSignup, loginToken, navigate, onAuthenticated]);
 
   // This is a local demo of an email-verification callback. The pending
   // customer record is deliberately separate from `sipnow-user`, so no user
@@ -409,11 +349,11 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     if (!NAME_PART_PATTERN.test(values.lastName.trim())) {
       nextErrors.lastName = "Enter a valid last name.";
     }
-    if (!/^4\d{8}$/.test(values.mobile)) {
+    if (!AUSTRALIAN_MOBILE_PATTERN.test(values.mobile)) {
       nextErrors.mobile =
         "Enter a valid Australian mobile number beginning with 4.";
     }
-    if (!EMAIL_PATTERN.test(values.email.trim())) {
+    if (!isValidEmail(values.email)) {
       nextErrors.email = "Enter a valid email address.";
     }
     if (!PASSWORD_PATTERN.test(values.password)) {
@@ -510,7 +450,7 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
 
   const handlePasswordLogin = () => {
     const nextErrors = {};
-    if (!EMAIL_PATTERN.test(values.email.trim())) {
+    if (!isValidEmail(values.email)) {
       nextErrors.email = "Enter a valid email address.";
     }
     if (!values.password) nextErrors.password = "Password is required.";
@@ -531,131 +471,10 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     authenticateUser(user);
   };
 
-  const handlePasswordlessRequest = () => {
-    const channel = getLoginChannel(values.identifier);
-    if (!channel) {
-      focusFirstError(
-        {
-          identifier:
-            "Enter a valid email address or an Australian mobile number beginning with 4.",
-        },
-        ["identifier"]
-      );
-      return;
-    }
-
-    const user = readStored("sipnow-user");
-    const email = values.identifier.trim().toLowerCase();
-    const mobile = normalizeMobile(values.identifier);
-    const isKnownUser =
-      user &&
-      (channel === "email"
-        ? user.email === email
-        : normalizeMobile(user.mobile) === mobile);
-
-    if (!isKnownUser) {
-      setMessage({
-        tone: "error",
-        text: "We couldn't find an account for those details. Please create an account first.",
-      });
-      return;
-    }
-
-    if (channel === "email") {
-      const token = createDemoToken();
-      // Demo transport only: an email provider should send this URL instead
-      // of exposing it in the browser. The token must be verified server-side.
-      const loginUrl = `/login?loginToken=${encodeURIComponent(token)}`;
-      window.localStorage.setItem(
-        "sipnow-login-link",
-        JSON.stringify({
-          email,
-          token,
-          expiresAt: Date.now() + EMAIL_VERIFICATION_TTL,
-        })
-      );
-      setDemoLoginLink(loginUrl);
-      setMessage({
-        tone: "success",
-        text: "Your sign-in link is ready. It expires in 10 minutes.",
-      });
-      return;
-    }
-
-    // Demo transport only: replace this stored code with an SMS-provider call
-    // and verify the code on the server before authenticating a customer.
-    window.localStorage.setItem(
-      "sipnow-login-otp",
-      JSON.stringify({
-        mobile,
-        code: DEMO_OTP,
-        expiresAt: Date.now() + MOBILE_VERIFICATION_TTL,
-      })
-    );
-    setLoginStage("otp");
-    setValues((current) => ({ ...current, otp: "" }));
-    setMessage({
-      tone: "success",
-      text: `A verification code was sent to +61 ${mobile}. For this demo, use ${DEMO_OTP}.`,
-    });
-  };
-
-  const handleOtpLogin = () => {
-    const request = readStored("sipnow-login-otp");
-    const user = readStored("sipnow-user");
-    const nextErrors = {};
-    if (values.otp.length !== 6) {
-      nextErrors.otp = "Enter the 6-digit verification code.";
-    }
-    if (focusFirstError(nextErrors, ["otp"])) return;
-
-    const isValid =
-      request?.code === values.otp &&
-      request?.expiresAt > Date.now() &&
-      normalizeMobile(user?.mobile) === request.mobile;
-    if (!isValid) {
-      setMessage({
-        tone: "error",
-        text: "That verification code is invalid or expired. Request a new code and try again.",
-      });
-      return;
-    }
-
-    window.localStorage.removeItem("sipnow-login-otp");
-    authenticateUser(user);
-    navigate("/profile", { replace: true });
-  };
-
-  const completeDemoEmailLogin = () => {
-    const request = readStored("sipnow-login-link");
-    const user = readStored("sipnow-user");
-    const isValid =
-      request?.expiresAt > Date.now() && user?.email === request?.email;
-
-    if (!isValid) {
-      setMessage({
-        tone: "error",
-        text: "This sign-in link is invalid or has expired. Request a new one and try again.",
-      });
-      return;
-    }
-
-    window.localStorage.removeItem("sipnow-login-link");
-    authenticateUser(user);
-    navigate("/profile", { replace: true });
-  };
-
-  const resendLoginVerification = () => {
-    if (loginStage === "otp") {
-      setLoginStage("contact");
-      setValues((current) => ({ ...current, otp: "" }));
-    }
-    handlePasswordlessRequest();
-  };
-
   const handleSubmit = (event) => {
     event.preventDefault();
     setMessage(null);
+
     if (isSignup) {
       if (signupStage === "mobile") {
         handleSignupMobileVerification();
@@ -665,28 +484,17 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
       } else {
         handleSignup();
       }
-    } else if (loginMethod === "password") {
-      handlePasswordLogin();
-    } else if (loginStage === "otp") {
-      handleOtpLogin();
     } else {
-      handlePasswordlessRequest();
+      handlePasswordLogin();
     }
   };
 
-  const channel = getLoginChannel(values.identifier);
-  const passwordlessButtonLabel =
-    channel === "email" ? "Send sign-in link" : "Send verification code";
-  const hasPendingEmailDemoLink =
-    !isSignup &&
-    loginMethod === "passwordless" &&
-    loginStage === "contact" &&
-    channel === "email" &&
-    Boolean(demoLoginLink);
-
   return (
-    <div className="min-h-screen bg-[#09080a] px-5 py-10 text-white sm:py-16">
-      <main className="mx-auto my-10 w-full max-w-xl rounded-[2rem] border border-primary/30 bg-[#100e11] p-8 text-white shadow-3xl shadow-black/50 sm:p-14">
+    <div className="min-h-screen bg-[#09080a] px-5 pt-28 pb-10 text-white sm:pt-32 sm:pb-16">
+      <main className="mx-auto w-full max-w-xl rounded-[2rem] border border-primary/30 bg-[#100e11] p-8 text-white shadow-3xl shadow-black/50 sm:p-14">
+        <button className="flex items-center gap-2 text-sm text-primary hover:underline" onClick={() => navigate("/")} type="button">
+          <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back to home
+        </button>
         <h1
           className={`font-headline-md text-4xl sm:text-5xl ${isSignup ? "mt-7" : "text-primary"}`}
         >
@@ -695,41 +503,10 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
         <p className="mt-5 text-gray-400">
           {isSignup
             ? "Create an account for faster checkout and saved favourites."
-            : "Use an email sign-in link, mobile verification code, or your password."}
+            : "Sign in securely using your email address and password."}
         </p>
 
-        {!isSignup && loginStage === "contact" && (
-          <div className="mt-8 grid grid-cols-2 rounded-xl border border-primary/20 bg-[#1a171c] p-1 text-sm">
-            <button
-              className={`rounded-lg px-3 py-2.5 transition-colors ${
-                loginMethod === "passwordless"
-                  ? "bg-primary text-white"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              onClick={() => {
-                setLoginMethod("passwordless");
-                setMessage(null);
-              }}
-              type="button"
-            >
-              Link or code
-            </button>
-            <button
-              className={`rounded-lg px-3 py-2.5 transition-colors ${
-                loginMethod === "password"
-                  ? "bg-primary text-white"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              onClick={() => {
-                setLoginMethod("password");
-                setMessage(null);
-              }}
-              type="button"
-            >
-              Password
-            </button>
-          </div>
-        )}
+
 
         <form className="mt-8 space-y-5" noValidate onSubmit={handleSubmit}>
           {isSignup && signupStage === "form" && (
@@ -812,7 +589,7 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
                 value={values.confirmPassword}
               />
               <div className="space-y-1">
-                <label className="flex cursor-pointer items-start gap-2.5 text-xs leading-5 text-gray-400">
+                <div className="flex items-start gap-2.5 text-xs leading-5 text-gray-400">
                   <input
                     checked={values.termsAccepted}
                     className="mt-1 rounded border-primary/40 bg-[#1a171c] text-primary focus:ring-primary"
@@ -822,10 +599,10 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
                   />
                   <span>
                     I agree to the{" "}
-                    <span className="text-primary">Terms & Conditions</span> and{" "}
-                    <span className="text-primary">Privacy Policy</span>.
+                    <Link className="text-primary hover:underline" to="/terms-conditions">Terms & Conditions</Link> and{" "}
+                    <Link className="text-primary hover:underline" to="/privacy-policy">Privacy Policy</Link>.
                   </span>
-                </label>
+                </div>
                 {errors.termsAccepted && (
                   <p className="text-xs text-red-400">{errors.termsAccepted}</p>
                 )}
@@ -919,7 +696,7 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
             </>
           )}
 
-          {!isSignup && loginMethod === "password" && (
+          {!isSignup && (
             <>
               <Field
                 autoComplete="email"
@@ -957,87 +734,6 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
             </>
           )}
 
-          {!isSignup &&
-            loginMethod === "passwordless" &&
-            loginStage === "contact" && (
-              <>
-                <Field
-                  autoComplete="username"
-                  error={errors.identifier}
-                  icon={channel === "mobile" ? "phone" : "mail"}
-                  inputMode={channel === "mobile" ? "tel" : undefined}
-                  label="Email address or mobile number"
-                  name="identifier"
-                  onChange={updateValue}
-                  placeholder="you@example.com or 4XX XXX XXX"
-                  required
-                  value={values.identifier}
-                />
-                <p className="text-xs leading-5 text-gray-400">
-                  {channel === "email"
-                    ? "We'll send a secure link to this email address."
-                    : channel === "mobile"
-                      ? "We'll send a 6-digit code to this mobile number."
-                      : "Enter an email for a sign-in link or a mobile number for a verification code."}
-                </p>
-              </>
-            )}
-
-          {!isSignup &&
-            loginMethod === "passwordless" &&
-            loginStage === "otp" && (
-              <>
-                <div className="rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-gray-200">
-                  <p className="font-medium text-primary">
-                    Verify your mobile number
-                  </p>
-                  <p className="mt-1">
-                    Enter the code sent to your mobile number. For this demo,
-                    use {DEMO_OTP}.
-                  </p>
-                  {loginMobileRequest?.expiresAt && (
-                    <div className="mt-3">
-                      <VerificationCountdown
-                        expiresAt={loginMobileRequest.expiresAt}
-                        key={loginMobileRequest.expiresAt}
-                        label="Mobile verification code"
-                      />
-                    </div>
-                  )}
-                </div>
-                <Field
-                  autoComplete="one-time-code"
-                  error={errors.otp}
-                  icon="password"
-                  inputMode="numeric"
-                  label="Verification code"
-                  maxLength={6}
-                  name="otp"
-                  onChange={updateValue}
-                  placeholder="Enter 6-digit code"
-                  required
-                  value={values.otp}
-                />
-                <button
-                  className="text-sm text-primary hover:underline"
-                  onClick={resendLoginVerification}
-                  type="button"
-                >
-                  Resend verification code
-                </button>
-                <button
-                  className="text-sm text-primary hover:underline"
-                  onClick={() => {
-                    setLoginStage("contact");
-                    setMessage(null);
-                  }}
-                  type="button"
-                >
-                  Use a different email or mobile number
-                </button>
-              </>
-            )}
-
           {visibleMessage && (
             <div
               className={`rounded-xl border px-4 py-3 text-sm ${
@@ -1051,39 +747,7 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
             </div>
           )}
 
-          {demoLoginLink &&
-            loginMethod === "passwordless" &&
-            loginStage === "contact" && (
-              <button
-                className="w-full rounded-full border border-primary/50 py-3 font-semibold text-primary transition-colors hover:bg-primary/10"
-                onClick={completeDemoEmailLogin}
-                type="button"
-              >
-                Open demo sign-in link
-              </button>
-            )}
 
-          {demoLoginLink &&
-            !isSignup &&
-            loginMethod === "passwordless" &&
-            loginStage === "contact" && (
-              <>
-                {loginEmailRequest?.expiresAt && (
-                  <VerificationCountdown
-                    expiresAt={loginEmailRequest.expiresAt}
-                    key={loginEmailRequest.expiresAt}
-                    label="Sign-in link"
-                  />
-                )}
-                <button
-                  className="w-full text-sm text-primary hover:underline"
-                  onClick={resendLoginVerification}
-                  type="button"
-                >
-                  Resend sign-in link
-                </button>
-              </>
-            )}
 
           {demoSignupLink && isSignup && signupStage === "email" && (
             <div className="grid gap-3 sm:grid-cols-2">
@@ -1107,10 +771,7 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
             </div>
           )}
 
-          {!(
-            (isSignup && signupStage === "email") ||
-            hasPendingEmailDemoLink
-          ) && (
+          {!(isSignup && signupStage === "email") && (
             <button
               className="w-full rounded-full py-4 font-bold text-white primary-gradient"
               type="submit"
@@ -1119,11 +780,7 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
                 ? signupStage === "mobile"
                   ? "Verify mobile and create account"
                   : "Send verification email"
-                : loginMethod === "password"
-                  ? "Login"
-                  : loginStage === "otp"
-                    ? "Verify and login"
-                    : passwordlessButtonLabel}
+                : "Login"}
             </button>
           )}
         </form>
