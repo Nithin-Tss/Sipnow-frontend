@@ -1,1 +1,0 @@
-import{j as n}from"./index-lFBpKeE-.js";import{P as t}from"./PageHero-C888qKZd.js";import"./Reveal-grDTu0rV.js";const o="Canadian Club";function s({onBack:a}){return n.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:n.jsx(t,{onBack:a,tag:"Brand",title:o,description:`The ${o} collection is coming soon.`})})}export{s as default};
