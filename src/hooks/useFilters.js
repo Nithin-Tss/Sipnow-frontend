@@ -145,11 +145,15 @@ export function useFilters(products) {
       sorted.sort((a, b) => b.rating - a.rating);
     } else if (sort === "brand-asc") {
       sorted.sort((a, b) =>
-        String(a.manufacturer || "").localeCompare(String(b.manufacturer || ""))
+        String(a.brand || a.manufacturer || "").localeCompare(
+          String(b.brand || b.manufacturer || "")
+        )
       );
     } else if (sort === "brand-desc") {
       sorted.sort((a, b) =>
-        String(b.manufacturer || "").localeCompare(String(a.manufacturer || ""))
+        String(b.brand || b.manufacturer || "").localeCompare(
+          String(a.brand || a.manufacturer || "")
+        )
       );
     }
     return sorted;
