@@ -58,7 +58,7 @@ export default function GiftCards({ onAddToCart, onBack, onRequireSignUp }) {
   };
 
   return (
-    <div className="min-h-screen pt-24 md:pt-28 pb-16">
+    <div className="min-h-screen pt-32 lg:pt-36 pb-16">
       <PageHero
         description="Select or enter a gift card amount to share curated cellar excellence instantly."
         onBack={onBack || (() => navigate("/"))}

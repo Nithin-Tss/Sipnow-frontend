@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SORT_OPTIONS, useFilters } from "../hooks/useFilters.js";
 import ProductFilters from "./ProductFilters.jsx";
 import ProductGrid from "./ProductGrid.jsx";
@@ -22,6 +22,8 @@ export default function Filters({
   typeOptions = null,
 }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const containerRef = useRef(null);
+  const isFirstRender = useRef(true);
   const {
     selectedCategories,
     toggleCategory,
@@ -45,8 +47,43 @@ export default function Filters({
 
   const showPlaceholders = placeholders && filteredProducts.length === 0;
 
+  // Scroll back to the top of the whole filters section (toggle button +
+  // sidebar + results) whenever a filter, sort, or search term changes —
+  // otherwise a shorter result set can leave the reader stranded below the
+  // fold with nothing visible. Anchored to the top of the section rather
+  // than just the results column so it doesn't land below a tall mobile
+  // filter panel (e.g. ShopAll's full category/type list), which looked
+  // like scrolling to the bottom instead of the top. Skipped on first mount
+  // so navigating straight to a filtered page doesn't yank the scroll
+  // position.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    const el = containerRef.current;
+    if (!el) return;
+
+    const headerEl = document.querySelector("nav");
+    const headerHeight = headerEl ? headerEl.getBoundingClientRect().height : 0;
+    const rectTop = el.getBoundingClientRect().top;
+    const target = Math.max(0, window.pageYOffset + rectTop - headerHeight - 16);
+
+    window.scrollTo({ top: target, left: 0, behavior: "smooth" });
+  }, [
+    selectedCategories,
+    selectedTypes,
+    priceRanges,
+    minPrice,
+    maxPrice,
+    includeOutOfStock,
+    minRating,
+    sort,
+  ]);
+
   return (
-    <>
+    <div ref={containerRef}>
       <button
         className="lg:hidden w-full flex items-center justify-center gap-2 glass-panel rounded-lg px-4 py-3 mb-6 text-sm font-label-md uppercase tracking-widest border border-primary/20"
         onClick={() => setFiltersOpen((open) => !open)}
@@ -122,6 +159,6 @@ export default function Filters({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
