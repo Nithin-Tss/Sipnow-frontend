@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useNavMenus } from "../hooks/useContent.js";
+import { matchBrands } from "../utils/brandDirectory.js";
 import { getProductSlug } from "../utils/productHelpers.js";
 import {
   MAX_SEARCH_LENGTH,
@@ -104,11 +105,35 @@ function SearchError({ message }) {
   );
 }
 
-function SearchResults({ results, searched, onSelect }) {
+function SearchResults({ results, brandMatches, searched, onSelect, onSelectBrand }) {
   if (!searched) return null;
   return (
     <div className="absolute top-full left-0 right-0 mt-2 glass-panel border border-outline-variant/30 rounded-2xl shadow-2xl overflow-hidden z-50">
-      {results.length === 0 ? (
+      {brandMatches.length > 0 && (
+        <ul className="border-b border-outline-variant/20">
+          {brandMatches.map((brand) => (
+            <li key={brand.route}>
+              <button
+                type="button"
+                onClick={() => onSelectBrand(brand)}
+                className="w-full flex items-center gap-3 px-5 py-3 text-left hover:bg-primary/10 transition-colors"
+              >
+                <span className="material-symbols-outlined text-[18px] text-primary shrink-0">
+                  storefront
+                </span>
+                <span className="text-sm text-on-surface">
+                  {brand.name}
+                </span>
+                <span className="ml-auto text-[10px] uppercase tracking-widest text-on-surface-variant">
+                  Brand
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {results.length === 0 && brandMatches.length === 0 ? (
         <p className="px-6 py-5 text-sm text-on-surface-variant">
           No products match your search.
         </p>
@@ -280,12 +305,16 @@ export default function Navbar({
       const category = product.category?.toLowerCase() || "";
       const categoryGroup = product.categoryGroup?.toLowerCase() || "";
       const type = product.type?.toLowerCase() || "";
+      const brand = product.brand?.toLowerCase() || "";
+      const manufacturer = product.manufacturer?.toLowerCase() || "";
 
       if (
         name.includes(normalizedTerm) ||
         category.includes(normalizedTerm) ||
         categoryGroup.includes(normalizedTerm) ||
-        type.includes(normalizedTerm)
+        type.includes(normalizedTerm) ||
+        brand.includes(normalizedTerm) ||
+        manufacturer.includes(normalizedTerm)
       ) {
         matches.push(product);
         if (matches.length === 6) break;
@@ -293,6 +322,11 @@ export default function Navbar({
     }
     return matches;
   }, [normalizedTerm, products]);
+
+  const brandMatches = useMemo(
+    () => matchBrands(normalizedTerm),
+    [normalizedTerm]
+  );
 
   // ========================================
   // SEARCH FOCUS
@@ -366,6 +400,19 @@ export default function Navbar({
     setOpenMenu(null);
 
     navigate(`/product/${getProductSlug(product)}`);
+  };
+
+  // Selecting a brand recommendation navigates to that brand's page.
+  const handleSelectBrand = (brand) => {
+    clearTimeout(blurTimeoutRef.current);
+
+    setSearchFocused(false);
+    setSearchTerm("");
+    setSearchError("");
+    setMobileOpen(false);
+    setOpenMenu(null);
+
+    navigate(brand.route);
   };
 
   // ========================================
@@ -459,7 +506,9 @@ export default function Navbar({
           <SearchError message={searchError} />
 
           <SearchResults
+            brandMatches={brandMatches}
             onSelect={handleSelectResult}
+            onSelectBrand={handleSelectBrand}
             results={searchResults}
             searched={
               !searchError && searchFocused && normalizedTerm.length > 0
@@ -746,7 +795,9 @@ export default function Navbar({
             <SearchError message={searchError} />
 
             <SearchResults
+              brandMatches={brandMatches}
               onSelect={handleSelectResult}
+              onSelectBrand={handleSelectBrand}
               results={searchResults}
               searched={
                 !searchError && searchFocused && normalizedTerm.length > 0

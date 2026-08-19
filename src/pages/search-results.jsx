@@ -1,9 +1,10 @@
 import { useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import PageHero from "../components/PageHero.jsx";
 import Filters from "../components/Filters.jsx";
 import Reveal from "../components/Reveal.jsx";
 import { useAddToCartFeedback } from "../hooks/useAddToCartFeedback.js";
+import { matchBrands } from "../utils/brandDirectory.js";
 import { validateSearchTerm } from "../utils/searchValidation.js";
 
 export default function SearchResults({
@@ -42,6 +43,8 @@ export default function SearchResults({
     });
   }, [products, query]);
 
+  const brandMatches = useMemo(() => matchBrands(query, 8), [query]);
+
   return (
     <div className="pt-32 lg:pt-36 pb-20">
       <PageHero
@@ -58,6 +61,25 @@ export default function SearchResults({
       />
 
       <Reveal className="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+        {brandMatches.length > 0 && (
+          <div className="mb-8">
+            <p className="font-label-md uppercase tracking-[0.15em] text-[11px] text-on-surface-variant mb-3">
+              Matching Brands
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {brandMatches.map((brand) => (
+                <Link
+                  className="rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary hover:bg-primary/20 transition-colors"
+                  key={brand.route}
+                  to={brand.route}
+                >
+                  {brand.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         <Filters
           addedProduct={addedProduct}
           emptyMessage={
