@@ -66,16 +66,16 @@ export default function TreadSoftly({
     BRAND BANNER
 ======================================================== */}
 
-          <section className="relative w-full min-h-[560px] md:min-h-[720px] overflow-hidden">
-            <img
-              src={treadSoftlyBanner}
-              alt="Tread Softly"
-              className="absolute inset-0 w-full h-full object-cover object-top"
-            />
+      <section className="relative w-full min-h-[560px] md:min-h-[720px] overflow-hidden">
+        <img
+          src={treadSoftlyBanner}
+          alt="Tread Softly"
+          className="absolute inset-0 w-full h-full object-cover object-top"
+        />
 
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/30" />
-    </section>
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/30" />
+      </section>
 
       {/* ========================================================
           ABOUT THE BRAND

@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { AUSTRALIAN_MOBILE_PATTERN, isValidEmail, NAME_PART_PATTERN, PASSWORD_PATTERN } from "../utils/validation.js";
+import {
+  AUSTRALIAN_MOBILE_PATTERN,
+  isValidEmail,
+  NAME_PART_PATTERN,
+  PASSWORD_PATTERN,
+} from "../utils/validation.js";
 
 const DEMO_OTP = "123456";
 const EMAIL_VERIFICATION_TTL = 10 * 60 * 1000;
@@ -492,8 +497,15 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
   return (
     <div className="min-h-screen bg-[#09080a] px-5 pt-28 pb-10 text-white sm:pt-32 sm:pb-16">
       <main className="mx-auto w-full max-w-xl rounded-[2rem] border border-primary/30 bg-[#100e11] p-8 text-white shadow-3xl shadow-black/50 sm:p-14">
-        <button className="flex items-center gap-2 text-sm text-primary hover:underline" onClick={() => navigate("/")} type="button">
-          <span className="material-symbols-outlined text-[18px]">arrow_back</span> Back to home
+        <button
+          className="flex items-center gap-2 text-sm text-primary hover:underline"
+          onClick={() => navigate("/")}
+          type="button"
+        >
+          <span className="material-symbols-outlined text-[18px]">
+            arrow_back
+          </span>{" "}
+          Back to home
         </button>
         <h1
           className={`font-headline-md text-4xl sm:text-5xl ${isSignup ? "mt-7" : "text-primary"}`}
@@ -505,8 +517,6 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
             ? "Create an account for faster checkout and saved favourites."
             : "Sign in securely using your email address and password."}
         </p>
-
-
 
         <form className="mt-8 space-y-5" noValidate onSubmit={handleSubmit}>
           {isSignup && signupStage === "form" && (
@@ -599,8 +609,20 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
                   />
                   <span>
                     I agree to the{" "}
-                    <Link className="text-primary hover:underline" to="/terms-conditions">Terms & Conditions</Link> and{" "}
-                    <Link className="text-primary hover:underline" to="/privacy-policy">Privacy Policy</Link>.
+                    <Link
+                      className="text-primary hover:underline"
+                      to="/terms-conditions"
+                    >
+                      Terms & Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      className="text-primary hover:underline"
+                      to="/privacy-policy"
+                    >
+                      Privacy Policy
+                    </Link>
+                    .
                   </span>
                 </div>
                 {errors.termsAccepted && (
@@ -746,8 +768,6 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
               {visibleMessage.text}
             </div>
           )}
-
-
 
           {demoSignupLink && isSignup && signupStage === "email" && (
             <div className="grid gap-3 sm:grid-cols-2">

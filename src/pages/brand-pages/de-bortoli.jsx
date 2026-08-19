@@ -73,13 +73,13 @@ export default function DeBortoli({
           IMAGE ONLY
       ======================================================== */}
 
-<section className="w-full overflow-hidden pt-[115px]">
-  <img
-    src={deBortoliBanner}
-    alt="De Bortoli"
-    className="block w-full h-auto object-contain"
-  />
-</section>
+      <section className="w-full overflow-hidden pt-[115px]">
+        <img
+          src={deBortoliBanner}
+          alt="De Bortoli"
+          className="block w-full h-auto object-contain"
+        />
+      </section>
 
       {/* ========================================================
           ABOUT THE BRAND
@@ -87,14 +87,14 @@ export default function DeBortoli({
 
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
         <div className="max-w-container-max mx-auto">
-<div className="max-w-4xl mx-auto text-center">            <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
+          <div className="max-w-4xl mx-auto text-center">
+            {" "}
+            <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
-
             <h2 className="font-serif text-3xl md:text-5xl text-on-surface">
               De Bortoli Collection
             </h2>
-
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
               Explor the De Bortoli collection and discover wines crafted with
               generations of Australian winemaking experience. Browse

@@ -65,27 +65,27 @@ export default function Belena({
           BELENA BRAND BANNER
           IMAGE ONLY
       ======================================================== */}
-<section className="w-full overflow-hidden pt-[115px]">
-  <img
-    src={belenaBanner}
-    alt="Belena"
-    className="block w-full h-auto object-contain"
-  />
-</section>
+      <section className="w-full overflow-hidden pt-[115px]">
+        <img
+          src={belenaBanner}
+          alt="Belena"
+          className="block w-full h-auto object-contain"
+        />
+      </section>
       {/* ========================================================
           ABOUT THE BRAND
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
         <div className="max-w-container-max mx-auto">
-<div className="max-w-4xl mx-auto text-center">            <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
+          <div className="max-w-4xl mx-auto text-center">
+            {" "}
+            <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
-
             <h2 className="font-serif text-3xl md:text-5xl text-on-surface">
               Belena Collection
             </h2>
-
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
               Explore the Belena collection and discover wines crafted to bring
               quality, character and flavour to every occasion. Browse the

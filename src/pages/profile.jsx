@@ -11,7 +11,11 @@ import {
   setDefaultAddress,
   upsertAddress,
 } from "../utils/addressStorage.js";
-import { AUSTRALIAN_MOBILE_PATTERN, isValidEmail, NAME_PART_PATTERN } from "../utils/validation.js";
+import {
+  AUSTRALIAN_MOBILE_PATTERN,
+  isValidEmail,
+  NAME_PART_PATTERN,
+} from "../utils/validation.js";
 
 const ADDRESS_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./#-]{10,100}$/;
 
@@ -206,7 +210,8 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
     if (error) {
       setError("");
     }
-    if (fieldErrors[name]) setFieldErrors((current) => ({ ...current, [name]: "" }));
+    if (fieldErrors[name])
+      setFieldErrors((current) => ({ ...current, [name]: "" }));
 
     if (profileNotice) {
       setProfileNotice(null);
@@ -231,11 +236,13 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
     }
 
     if (!AUSTRALIAN_MOBILE_PATTERN.test(values.mobile)) {
-      nextErrors.mobile = "Enter a valid Australian mobile number beginning with 4.";
+      nextErrors.mobile =
+        "Enter a valid Australian mobile number beginning with 4.";
     }
 
     if (values.address && !ADDRESS_PATTERN.test(values.address.trim())) {
-      nextErrors.address = "Enter a street address with a building or street number.";
+      nextErrors.address =
+        "Enter a street address with a building or street number.";
     }
 
     /*
@@ -584,7 +591,9 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                         </p>
                       )}
                       {fieldErrors[name] && (
-                        <p className="mt-2 text-xs text-error">{fieldErrors[name]}</p>
+                        <p className="mt-2 text-xs text-error">
+                          {fieldErrors[name]}
+                        </p>
                       )}
                     </label>
                   ))}
@@ -970,7 +979,10 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-error/20 bg-error/5 text-error transition-all duration-200 hover:border-error/40 hover:bg-error/10"
                       onClick={() => {
                         toggleWishlist(product);
-                        setProfileNotice({ tone: "success", text: `${product.name} has been removed from your wishlist.` });
+                        setProfileNotice({
+                          tone: "success",
+                          text: `${product.name} has been removed from your wishlist.`,
+                        });
                       }}
                       title={`Remove ${product.name} from wishlist`}
                       type="button"
@@ -1001,8 +1013,16 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       <section className="glass-panel mx-auto mt-6 max-w-6xl rounded-2xl p-6 sm:p-8">
         <h2 className="font-headline-md text-2xl">Order history</h2>
 
-        <p className="mt-2 text-sm text-on-surface-variant">View previous purchases and open individual order details.</p>
-        <button className="mt-5 rounded-lg px-5 py-2 text-sm text-white primary-gradient" onClick={() => navigate("/order-history")} type="button">View order history</button>
+        <p className="mt-2 text-sm text-on-surface-variant">
+          View previous purchases and open individual order details.
+        </p>
+        <button
+          className="mt-5 rounded-lg px-5 py-2 text-sm text-white primary-gradient"
+          onClick={() => navigate("/order-history")}
+          type="button"
+        >
+          View order history
+        </button>
       </section>
     </div>
   );

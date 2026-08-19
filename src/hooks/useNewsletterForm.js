@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[^\s@]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
 const STORAGE_KEY = "sipnow-newsletter-subscription";
 
 function getStoredSubscription() {

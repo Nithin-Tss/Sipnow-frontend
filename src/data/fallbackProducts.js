@@ -103,7 +103,8 @@ const RAW_PRODUCTS = [
     volume: "750mL",
     manufacturer: "Domaine Chandon",
     origin: "Yarra Valley, Australia",
-    description: "A refreshing sparkling wine with notes of orange and bitter herbs.",
+    description:
+      "A refreshing sparkling wine with notes of orange and bitter herbs.",
   },
   {
     _id: "6a85733cf369876052675f8f",
@@ -163,8 +164,7 @@ const RAW_PRODUCTS = [
     volume: "750mL",
     manufacturer: "Pepperjack",
     origin: "Barossa Valley, Australia",
-    description:
-      "A full-bodied Shiraz with rich dark berry and pepper notes.",
+    description: "A full-bodied Shiraz with rich dark berry and pepper notes.",
   },
 ];
 

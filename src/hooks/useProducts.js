@@ -18,18 +18,16 @@ function adaptProduct(product) {
 
 /** Product catalog is fetched live from the backend API. */
 export function useProducts() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState(() =>
+    !API_URL ? FALLBACK_PRODUCTS : []
+  );
+  const [loading, setLoading] = useState(() => Boolean(API_URL));
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    let cancelled = false;
+    if (!API_URL) return;
 
-    if (!API_URL) {
-      setProducts(FALLBACK_PRODUCTS);
-      setLoading(false);
-      return;
-    }
+    let cancelled = false;
 
     fetch(`${API_URL}/products?limit=1000`)
       .then((res) => {

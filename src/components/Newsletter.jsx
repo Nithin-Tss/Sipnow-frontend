@@ -5,7 +5,6 @@ import sipnowClubWhisky from "../assets/sipnow-club-whisky.jpg";
 export default function Newsletter() {
   const {
     email,
-    subscribedEmail,
     isSubscribed,
     status,
     errorMessage,
@@ -49,16 +48,8 @@ export default function Newsletter() {
                   </span>
                   <div className="space-y-1">
                     <h3 className="font-bold text-on-surface text-base sm:text-lg">
-                      You are a SipNow Club member!
+                      You're in! Welcome to the list
                     </h3>
-                    <p className="text-on-surface-variant text-xs sm:text-sm leading-relaxed">
-                      Subscribed as{" "}
-                      <strong className="text-primary font-semibold">
-                        {subscribedEmail}
-                      </strong>
-                      . You will receive early access to rare releases, expert
-                      pairing guides, and member-only pricing.
-                    </p>
                   </div>
                 </div>
 

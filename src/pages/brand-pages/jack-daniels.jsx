@@ -86,20 +86,20 @@ export default function JackDaniels({
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
-        {/* ========================================================
+      {/* ========================================================
             BRAND BANNER
         ======================================================== */}
 
-        <section className="relative w-full min-h-[560px] md:min-h-[720px] overflow-hidden">
-          <img
-            src={jackDanielsBanner}
-            alt="Jack Daniel's"
-            className="absolute inset-0 w-full h-full object-cover object-top"
-          />
+      <section className="relative w-full min-h-[560px] md:min-h-[720px] overflow-hidden">
+        <img
+          src={jackDanielsBanner}
+          alt="Jack Daniel's"
+          className="absolute inset-0 w-full h-full object-cover object-top"
+        />
 
-          {/* Dark overlay */}
-          <div className="absolute inset-0 bg-black/30" />
-        </section>
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/30" />
+      </section>
 
       {/* ========================================================
           ABOUT THE BRAND

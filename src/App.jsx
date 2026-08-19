@@ -160,7 +160,9 @@ export default function App() {
   const [user, setUser] = useState(() => readStored("sipnow-session", null));
   const [wishlistItems, setWishlistItems] = useState(() => {
     const session = readStored("sipnow-session", null);
-    return session?.email ? readStored(`sipnow-wishlist:${session.email.toLowerCase()}`, []) : [];
+    return session?.email
+      ? readStored(`sipnow-wishlist:${session.email.toLowerCase()}`, [])
+      : [];
   });
   const [wishlistNotice, setWishlistNotice] = useState(null);
   const [authDestination, setAuthDestination] = useState("profile");
@@ -317,13 +319,23 @@ export default function App() {
   const toggleWishlist = (product) => {
     if (!user) {
       setAuthDestination("wishlist");
-      navigate("/login", { state: { authNotice: "Please sign in or create an account to use your wishlist." } });
+      navigate("/login", {
+        state: {
+          authNotice:
+            "Please sign in or create an account to use your wishlist.",
+        },
+      });
       return false;
     }
     setWishlistItems((current) => {
       const exists = current.some((item) => item.name === product.name);
-      if (exists) setWishlistNotice(`${product.name} has been removed from your wishlist.`);
-      return exists ? current.filter((item) => item.name !== product.name) : [...current, product];
+      if (exists)
+        setWishlistNotice(
+          `${product.name} has been removed from your wishlist.`
+        );
+      return exists
+        ? current.filter((item) => item.name !== product.name)
+        : [...current, product];
     });
     return true;
   };
@@ -336,7 +348,9 @@ export default function App() {
       email: nextUser.email,
       mobile: nextUser.mobile,
     });
-    setWishlistItems(readStored(`sipnow-wishlist:${nextUser.email.toLowerCase()}`, []));
+    setWishlistItems(
+      readStored(`sipnow-wishlist:${nextUser.email.toLowerCase()}`, [])
+    );
     switchAuthPage(authDestination);
   };
 
@@ -433,7 +447,22 @@ export default function App() {
               <Route
                 path="/wishlist"
                 element={
-                  user ? <Wishlist onAddToCart={addToCart} onBack={goHome} onShopAll={() => navigate("/shop-all")} /> : <Navigate replace to="/login" state={{ authNotice: "Please sign in or create an account to view your wishlist." }} />
+                  user ? (
+                    <Wishlist
+                      onAddToCart={addToCart}
+                      onBack={goHome}
+                      onShopAll={() => navigate("/shop-all")}
+                    />
+                  ) : (
+                    <Navigate
+                      replace
+                      to="/login"
+                      state={{
+                        authNotice:
+                          "Please sign in or create an account to view your wishlist.",
+                      }}
+                    />
+                  )
                 }
               />
 
@@ -454,10 +483,23 @@ export default function App() {
               <Route
                 path="/orders/:orderNumber"
                 element={
-                  user ? <OrderDetail user={user} /> : <Navigate replace to="/login" />
+                  user ? (
+                    <OrderDetail user={user} />
+                  ) : (
+                    <Navigate replace to="/login" />
+                  )
                 }
               />
-              <Route path="/order-history" element={user ? <OrderHistory user={user} /> : <Navigate replace to="/login" />} />
+              <Route
+                path="/order-history"
+                element={
+                  user ? (
+                    <OrderHistory user={user} />
+                  ) : (
+                    <Navigate replace to="/login" />
+                  )
+                }
+              />
               <Route
                 path="/profile"
                 element={
@@ -595,7 +637,10 @@ export default function App() {
                 path="/terms-conditions"
                 element={<TermsConditions onBack={goHome} />}
               />
-              <Route path="/privacy-policy" element={<PrivacyPolicy onBack={goHome} />} />
+              <Route
+                path="/privacy-policy"
+                element={<PrivacyPolicy onBack={goHome} />}
+              />
               <Route
                 path="/terms"
                 element={<Navigate replace to="/terms-conditions" />}

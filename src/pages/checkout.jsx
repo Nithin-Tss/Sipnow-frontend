@@ -369,10 +369,14 @@ export default function Checkout({
       // Five digit identifiers are concise and remain stable in order history.
       orderNumber: `#${String(
         readPreviousOrders().reduce((highest, previous) => {
-          const value = Number(String(previous.orderNumber ?? "").replace(/\D/g, ""));
+          const value = Number(
+            String(previous.orderNumber ?? "").replace(/\D/g, "")
+          );
           return Number.isFinite(value) ? Math.max(highest, value) : highest;
         }, 0) + 1
-      ).padStart(5, "0").slice(-5)}`,
+      )
+        .padStart(5, "0")
+        .slice(-5)}`,
       status: fulfilment === "delivery" ? "PAYMENT_PENDING" : "CREATED",
       cartItems,
       customer: {

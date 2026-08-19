@@ -105,7 +105,13 @@ function SearchError({ message }) {
   );
 }
 
-function SearchResults({ results, brandMatches, searched, onSelect, onSelectBrand }) {
+function SearchResults({
+  results,
+  brandMatches,
+  searched,
+  onSelect,
+  onSelectBrand,
+}) {
   if (!searched) return null;
   return (
     <div className="absolute top-full left-0 right-0 mt-2 glass-panel border border-outline-variant/30 rounded-2xl shadow-2xl overflow-hidden z-50">
@@ -121,9 +127,7 @@ function SearchResults({ results, brandMatches, searched, onSelect, onSelectBran
                 <span className="material-symbols-outlined text-[18px] text-primary shrink-0">
                   storefront
                 </span>
-                <span className="text-sm text-on-surface">
-                  {brand.name}
-                </span>
+                <span className="text-sm text-on-surface">{brand.name}</span>
                 <span className="ml-auto text-[10px] uppercase tracking-widest text-on-surface-variant">
                   Brand
                 </span>

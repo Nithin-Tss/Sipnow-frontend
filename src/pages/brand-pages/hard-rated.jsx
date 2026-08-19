@@ -72,7 +72,6 @@ export default function HardRated({
       ======================================================== */}
 
       <section className="relative w-full min-h-[740px] overflow-hidden">
-
         <img
           src={hardRatedBanner}
           alt={BRAND_NAME}
@@ -99,9 +98,7 @@ export default function HardRated({
 
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
         <div className="max-w-container-max mx-auto">
-
           <div className="max-w-4xl mx-auto text-center">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
@@ -115,7 +112,6 @@ export default function HardRated({
               is. With low fizz, zesty flavour and refreshment that packs a
               punch. Perfect for here, there, and everywhere.
             </p>
-
           </div>
         </div>
       </section>
