@@ -2,7 +2,6 @@ const MAX_SEARCH_LENGTH = 100;
 
 const HTML_TAG_PATTERN = /<[^>]*>/;
 const HAS_LETTER_PATTERN = /[a-zA-Z]/;
-const HAS_SPECIAL_CHAR_PATTERN = /[^a-zA-Z0-9\s]/;
 const REPEATED_CHAR_PATTERN = /(.)\1{3,}/;
 
 // Validates a raw search term before it's submitted. Returns
@@ -26,10 +25,10 @@ export function validateSearchTerm(rawTerm) {
     return { valid: false, reason: "Search term cannot contain HTML tags." };
   }
 
-  if (HAS_SPECIAL_CHAR_PATTERN.test(term) && !HAS_LETTER_PATTERN.test(term)) {
+  if (!HAS_LETTER_PATTERN.test(term)) {
     return {
       valid: false,
-      reason: "Search term cannot contain only special characters.",
+      reason: "Search term must contain at least one letter.",
     };
   }
 

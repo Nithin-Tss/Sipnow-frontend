@@ -192,9 +192,10 @@ export default function ProductFilters({
             <input
               className="w-full bg-transparent text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none"
               min="0"
-              onChange={(e) => onMinPriceChange(e.target.value)}
+              onChange={(e) => onMinPriceChange(e.target.value.replace(/[^\d.]/g, ""))}
               placeholder="Min"
               type="number"
+              inputMode="decimal"
               value={minPrice}
             />
           </label>
@@ -206,9 +207,10 @@ export default function ProductFilters({
             <input
               className="w-full bg-transparent text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none"
               min="0"
-              onChange={(e) => onMaxPriceChange(e.target.value)}
+              onChange={(e) => onMaxPriceChange(e.target.value.replace(/[^\d.]/g, ""))}
               placeholder="Max"
               type="number"
+              inputMode="decimal"
               value={maxPrice}
             />
           </label>

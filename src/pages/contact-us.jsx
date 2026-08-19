@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Reveal from "../components/Reveal.jsx";
+import { validateEmail } from "../utils/emailValidation.js";
 
 export default function ContactUs({ onBack }) {
   const [formData, setFormData] = useState({
@@ -9,10 +10,13 @@ export default function ContactUs({ onBack }) {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.name && formData.email && formData.message) {
+    const nextEmailError = validateEmail(formData.email);
+    setEmailError(nextEmailError);
+    if (formData.name && !nextEmailError && formData.message) {
       setSubmitted(true);
     }
   };
@@ -20,6 +24,7 @@ export default function ContactUs({ onBack }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "email" && emailError) setEmailError("");
   };
 
   return (
@@ -203,8 +208,9 @@ export default function ContactUs({ onBack }) {
                       placeholder="Enter your name"
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full bg-surface-container-low border border-outline-variant/40 rounded-xl px-4 py-3 text-on-surface placeholder:text-outline/70 focus:border-primary focus:outline-none transition-colors"
+                      className={`w-full bg-surface-container-low border rounded-xl px-4 py-3 text-on-surface placeholder:text-outline/70 focus:outline-none transition-colors ${emailError ? "border-error focus:border-error" : "border-outline-variant/40 focus:border-primary"}`}
                     />
+                    {emailError && <p className="text-xs text-error">{emailError}</p>}
                   </div>
 
                   {/* Your Email */}

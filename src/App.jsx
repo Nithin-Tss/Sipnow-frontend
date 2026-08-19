@@ -154,9 +154,13 @@ export default function App() {
     readStored("sipnow-age-verified", false)
   );
   const [quizOpen, setQuizOpen] = useState(false);
-  const [cartItems, setCartItems] = useState(() =>
-    normalizeStoredCart(readStored("sipnow-cart", []))
-  );
+  const [cartItems, setCartItems] = useState(() => {
+    const session = readStored("sipnow-session", null);
+    const key = session?.email
+      ? `sipnow-cart:${session.email.toLowerCase()}`
+      : "sipnow-cart";
+    return normalizeStoredCart(readStored(key, []));
+  });
   const [user, setUser] = useState(() => readStored("sipnow-session", null));
   const [wishlistItems, setWishlistItems] = useState(() => {
     const session = readStored("sipnow-session", null);
@@ -176,10 +180,14 @@ export default function App() {
     0
   );
 
-  // Persist cart changes so the cart survives a page refresh.
+  // Carts survive logout/login but remain associated with the account that
+  // created them. Anonymous visitors retain a separate guest cart.
   useEffect(() => {
-    window.localStorage.setItem("sipnow-cart", JSON.stringify(cartItems));
-  }, [cartItems]);
+    const key = user?.email
+      ? `sipnow-cart:${user.email.toLowerCase()}`
+      : "sipnow-cart";
+    window.localStorage.setItem(key, JSON.stringify(cartItems));
+  }, [cartItems, user?.email]);
 
   // Persist wishlist changes so it survives a page refresh.
   useEffect(() => {
@@ -348,9 +356,14 @@ export default function App() {
       email: nextUser.email,
       mobile: nextUser.mobile,
     });
+<<<<<<< HEAD
     setWishlistItems(
       readStored(`sipnow-wishlist:${nextUser.email.toLowerCase()}`, [])
     );
+=======
+    setCartItems(normalizeStoredCart(readStored(`sipnow-cart:${nextUser.email.toLowerCase()}`, [])));
+    setWishlistItems(readStored(`sipnow-wishlist:${nextUser.email.toLowerCase()}`, []));
+>>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
     switchAuthPage(authDestination);
   };
 
@@ -377,6 +390,7 @@ export default function App() {
   const logout = () => {
     window.localStorage.removeItem("sipnow-session");
     setUser(null);
+    setCartItems(normalizeStoredCart(readStored("sipnow-cart", [])));
     setWishlistItems([]);
     goHome();
   };

@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+<<<<<<< HEAD
 import {
   AUSTRALIAN_MOBILE_PATTERN,
   isValidEmail,
   NAME_PART_PATTERN,
   PASSWORD_PATTERN,
 } from "../utils/validation.js";
+=======
+import { AUSTRALIAN_MOBILE_PATTERN, NAME_PART_PATTERN, PASSWORD_PATTERN } from "../utils/validation.js";
+import { validateEmail } from "../utils/emailValidation.js";
+import PageHero from "../components/PageHero.jsx";
+>>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
 
 const DEMO_OTP = "123456";
 const EMAIL_VERIFICATION_TTL = 10 * 60 * 1000;
@@ -206,9 +212,7 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     if (name === "firstName" || name === "lastName") {
       nextValue = value.replace(/[^A-Za-z '-]/g, "");
     }
-    // Authentication accepts the canonical 4XXXXXXXX format only; do not
-    // silently turn punctuation or country codes into a valid credential.
-    if (name === "mobile") nextValue = value.slice(0, 9);
+    if (name === "mobile") nextValue = value.replace(/\D/g, "").slice(0, 9);
     if (name === "otp") nextValue = value.replace(/\D/g, "").slice(0, 6);
 
     setValues((current) => ({
@@ -237,7 +241,8 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     const isValid =
       request?.token === signupToken &&
       request?.expiresAt > Date.now() &&
-      pendingSignup?.email === request.email;
+      pendingSignup?.email === request.email &&
+      !validateEmail(pendingSignup?.email);
 
     if (!isValid) {
       navigate("/signup", {
@@ -295,6 +300,11 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
   };
 
   const sendSignupEmailVerification = (pendingSignup) => {
+    const emailError = validateEmail(pendingSignup?.email);
+    if (emailError) {
+      setErrors((current) => ({ ...current, email: emailError }));
+      return;
+    }
     const token = createDemoToken();
     const verificationUrl = `/signup?signupToken=${encodeURIComponent(token)}`;
     window.localStorage.setItem(
@@ -358,8 +368,9 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
       nextErrors.mobile =
         "Enter a valid Australian mobile number beginning with 4.";
     }
-    if (!isValidEmail(values.email)) {
-      nextErrors.email = "Enter a valid email address.";
+    const emailError = validateEmail(values.email);
+    if (emailError) {
+      nextErrors.email = emailError;
     }
     if (!PASSWORD_PATTERN.test(values.password)) {
       nextErrors.password =
@@ -455,8 +466,9 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
 
   const handlePasswordLogin = () => {
     const nextErrors = {};
-    if (!isValidEmail(values.email)) {
-      nextErrors.email = "Enter a valid email address.";
+    const emailError = validateEmail(values.email);
+    if (emailError) {
+      nextErrors.email = emailError;
     }
     if (!values.password) nextErrors.password = "Password is required.";
     if (focusFirstError(nextErrors, ["email", "password"])) return;
@@ -495,8 +507,10 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#09080a] px-5 pt-28 pb-10 text-white sm:pt-32 sm:pb-16">
+    <div className="min-h-screen bg-[#09080a] px-5 pt-32 pb-10 text-white sm:pt-36 sm:pb-16">
+      <PageHero onBack={() => navigate("/")} />
       <main className="mx-auto w-full max-w-xl rounded-[2rem] border border-primary/30 bg-[#100e11] p-8 text-white shadow-3xl shadow-black/50 sm:p-14">
+<<<<<<< HEAD
         <button
           className="flex items-center gap-2 text-sm text-primary hover:underline"
           onClick={() => navigate("/")}
@@ -507,6 +521,8 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
           </span>{" "}
           Back to home
         </button>
+=======
+>>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
         <h1
           className={`font-headline-md text-4xl sm:text-5xl ${isSignup ? "mt-7" : "text-primary"}`}
         >

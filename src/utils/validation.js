@@ -4,6 +4,7 @@ export const NAME_PART_PATTERN =
 export const PASSWORD_PATTERN =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
 export const AUSTRALIAN_MOBILE_PATTERN = /^4\d{8}$/;
+<<<<<<< HEAD
 
 export function isValidEmail(value) {
   const email = String(value ?? "").trim();
@@ -30,3 +31,5 @@ export function isValidEmail(value) {
     /^[A-Za-z]{2,63}$/.test(labels.at(-1))
   );
 }
+=======
+>>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b

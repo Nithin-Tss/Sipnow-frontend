@@ -13,7 +13,22 @@ export default function GiftCards({ onAddToCart, onBack, onRequireSignUp }) {
     setSelectedPreset(preset);
   };
 
+<<<<<<< HEAD
   const currentAmount = selectedPreset || 0;
+=======
+  const handleCustomAmountChange = (e) => {
+    const val = e.target.value.replace(/[^\d.]/g, "");
+    setCustomAmount(val);
+    const num = parseFloat(val);
+    if (!isNaN(num) && presets.includes(num)) {
+      setSelectedPreset(num);
+    } else {
+      setSelectedPreset(null);
+    }
+  };
+
+  const currentAmount = parseFloat(customAmount) || 0;
+>>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
   const isValidAmount = currentAmount > 0;
 
   const handlePayNow = (e) => {
@@ -45,7 +60,7 @@ export default function GiftCards({ onAddToCart, onBack, onRequireSignUp }) {
   };
 
   return (
-    <div className="min-h-screen pt-24 md:pt-28 pb-16">
+    <div className="min-h-screen pt-32 lg:pt-36 pb-16">
       <PageHero
         description="Select or enter a gift card amount to share curated cellar excellence instantly."
         onBack={onBack || (() => navigate("/"))}
@@ -69,10 +84,24 @@ export default function GiftCards({ onAddToCart, onBack, onRequireSignUp }) {
                 </span>
 
                 <input
+<<<<<<< HEAD
                   type="text"
                   readOnly
                   value={selectedPreset}
                   className="w-full bg-surface-container-lowest/80 border border-primary/30 rounded-2xl py-4 pl-11 pr-6 text-center text-2xl font-bold text-on-surface focus:outline-none cursor-default select-none transition-all"
+=======
+                  type="number"
+                  inputMode="decimal"
+                  min="1"
+                  step="any"
+                  placeholder="Custom Amount"
+                  value={customAmount}
+                  onChange={handleCustomAmountChange}
+                  onKeyDown={(event) => {
+                    if (["e", "E", "+", "-"].includes(event.key)) event.preventDefault();
+                  }}
+                  className="w-full bg-surface-container-lowest/80 border border-primary/30 rounded-2xl py-4 pl-11 pr-6 text-center text-2xl font-bold text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+>>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
                 />
               </div>
             </div>

@@ -11,11 +11,16 @@ import {
   setDefaultAddress,
   upsertAddress,
 } from "../utils/addressStorage.js";
+<<<<<<< HEAD
 import {
   AUSTRALIAN_MOBILE_PATTERN,
   isValidEmail,
   NAME_PART_PATTERN,
 } from "../utils/validation.js";
+=======
+import { AUSTRALIAN_MOBILE_PATTERN, NAME_PART_PATTERN } from "../utils/validation.js";
+import { validateEmail } from "../utils/emailValidation.js";
+>>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
 
 const ADDRESS_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./#-]{10,100}$/;
 
@@ -158,14 +163,13 @@ function SavedAddressCard({ address, onDelete, onEdit, onSetDefault }) {
 export default function Profile({ onLogout, onSave, onBack, user }) {
   const navigate = useNavigate();
 
-  const { toggleWishlist, wishlistItems } = useWishlist();
+  const { toggleWishlist, wishlistItems, wishlistNotice } = useWishlist();
 
   const [addresses, setAddresses] = useState(() => readSavedAddresses(user));
 
   const [values, setValues] = useState(() => getProfileValues(user, addresses));
 
   const [editing, setEditing] = useState(false);
-  const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const [profileNotice, setProfileNotice] = useState(null);
   const [addressEditor, setAddressEditor] = useState(null);
@@ -193,9 +197,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
     }
 
     if (name === "mobile") {
-      // Preserve invalid characters so validation can explain the problem
-      // instead of silently accepting a formatted number.
-      cleanedValue = value.slice(0, 9);
+      cleanedValue = value.replace(/\D/g, "").slice(0, 9);
     }
 
     if (name === "city") {
@@ -207,11 +209,15 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       [name]: cleanedValue,
     }));
 
+<<<<<<< HEAD
     if (error) {
       setError("");
     }
     if (fieldErrors[name])
       setFieldErrors((current) => ({ ...current, [name]: "" }));
+=======
+    if (fieldErrors[name]) setFieldErrors((current) => ({ ...current, [name]: "" }));
+>>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
 
     if (profileNotice) {
       setProfileNotice(null);
@@ -231,8 +237,9 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       nextErrors.lastName = "Enter a valid last name.";
     }
 
-    if (!isValidEmail(values.email)) {
-      nextErrors.email = "Enter a valid email address.";
+    const emailError = validateEmail(values.email);
+    if (emailError) {
+      nextErrors.email = emailError;
     }
 
     if (!AUSTRALIAN_MOBILE_PATTERN.test(values.mobile)) {
@@ -257,7 +264,6 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
 
     if (Object.keys(nextErrors).length) {
       setFieldErrors(nextErrors);
-      setError(Object.values(nextErrors)[0]);
       return;
     }
 
@@ -330,7 +336,6 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
 
     onSave(updatedUser);
 
-    setError("");
     setFieldErrors({});
 
     setProfileNotice({
@@ -484,7 +489,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                     onClick={() => {
                       if (editing) {
                         setValues(getProfileValues(user, addresses));
-                        setError("");
+                        setFieldErrors({});
                         setProfileNotice(null);
                       }
 
@@ -599,22 +604,11 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                   ))}
                 </div>
 
-                {error && (
-                  <div className="mt-6 flex items-start gap-3 rounded-xl border border-error/20 bg-error/10 px-4 py-3.5">
-                    <span className="material-symbols-outlined mt-0.5 text-[19px] text-error">
-                      error
-                    </span>
-
-                    <p className="text-sm leading-5 text-error">{error}</p>
-                  </div>
-                )}
-
                 <div className="mt-8 flex flex-col-reverse gap-3 border-t border-white/10 pt-7 sm:flex-row sm:items-center sm:justify-between">
                   <button
                     className="rounded-xl px-5 py-3 text-sm font-medium text-on-surface-variant transition-all hover:bg-white/5 hover:text-white"
                     onClick={() => {
                       setValues(getProfileValues(user, addresses));
-                      setError("");
                       setFieldErrors({});
                       setProfileNotice(null);
                       setEditing(false);
@@ -945,6 +939,13 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
               </button>
             </div>
 
+            {wishlistNotice && (
+              <div className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300" role="status">
+                <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                {wishlistNotice}
+              </div>
+            )}
+
             {wishlistItems.length ? (
               <div className="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {wishlistItems.slice(0, 3).map((product) => (
@@ -979,10 +980,13 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-error/20 bg-error/5 text-error transition-all duration-200 hover:border-error/40 hover:bg-error/10"
                       onClick={() => {
                         toggleWishlist(product);
+<<<<<<< HEAD
                         setProfileNotice({
                           tone: "success",
                           text: `${product.name} has been removed from your wishlist.`,
                         });
+=======
+>>>>>>> 795157638b969a0f728ac6db8e5d6e0ea734e26b
                       }}
                       title={`Remove ${product.name} from wishlist`}
                       type="button"
