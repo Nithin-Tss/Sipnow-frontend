@@ -4,7 +4,7 @@ import ProductGrid from "../../components/ProductGrid.jsx";
 
 import { useAddToCartFeedback } from "../../hooks/useAddToCartFeedback.js";
 
-import johnnieWalkerBanner from "../../assets/brandimages/jonnie-walker.png";
+import johnnieWalkerBanner from "../../assets/brandimages/Jonnie-walker.png";
 
 export default function JohnnieWalker({
   products = [],
