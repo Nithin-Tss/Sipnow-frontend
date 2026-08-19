@@ -11,18 +11,16 @@ import {
   setDefaultAddress,
   upsertAddress,
 } from "../utils/addressStorage.js";
-import { AUSTRALIAN_MOBILE_PATTERN, NAME_PART_PATTERN } from "../utils/validation.js";
+import {
+  AUSTRALIAN_MOBILE_PATTERN,
+  NAME_PART_PATTERN,
+} from "../utils/validation.js";
 import { validateEmail } from "../utils/emailValidation.js";
 
-const ADDRESS_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./#-]{10,100}$/;
+const ADDRESS_PATTERN =
+  /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./#-]{10,100}$/;
 
-/*
- * Temporary Australian city validation.
- *
- * This is kept directly inside profile.jsx for now.
- * We can move this into a shared validation file later
- * when Checkout and Profile are being unified.
- */
+/* Australian city validation */
 const VALID_AUSTRALIAN_CITIES = [
   "Adelaide",
   "Albury",
@@ -84,23 +82,26 @@ function normalizeMobile(value) {
     .slice(0, 9);
 }
 
-function getProfileValues(user, addresses) {
-  const nameParts = (user?.name ?? "").trim().split(/\s+/).filter(Boolean);
-
-  const defaultAddress =
-    addresses.find((address) => address.isDefault) ?? addresses[0] ?? {};
+function getProfileValues(user) {
+  const nameParts = (user?.name ?? "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
 
   return {
     firstName: user?.firstName ?? nameParts[0] ?? "",
     lastName: user?.lastName ?? nameParts.slice(1).join(" ") ?? "",
     email: user?.email ?? "",
     mobile: normalizeMobile(user?.mobile),
-    address: defaultAddress.address ?? "",
-    city: defaultAddress.city ?? "",
   };
 }
 
-function SavedAddressCard({ address, onDelete, onEdit, onSetDefault }) {
+function SavedAddressCard({
+  address,
+  onDelete,
+  onEdit,
+  onSetDefault,
+}) {
   return (
     <article className="rounded-xl border border-primary/20 bg-primary/5 p-4 transition-all duration-300 hover:border-primary/40 hover:bg-primary/10">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -152,14 +153,27 @@ function SavedAddressCard({ address, onDelete, onEdit, onSetDefault }) {
   );
 }
 
-export default function Profile({ onLogout, onSave, onBack, user }) {
+export default function Profile({
+  onLogout,
+  onSave,
+  onBack,
+  user,
+}) {
   const navigate = useNavigate();
 
-  const { toggleWishlist, wishlistItems, wishlistNotice } = useWishlist();
+  const {
+    toggleWishlist,
+    wishlistItems,
+    wishlistNotice,
+  } = useWishlist();
 
-  const [addresses, setAddresses] = useState(() => readSavedAddresses(user));
+  const [addresses, setAddresses] = useState(() =>
+    readSavedAddresses(user)
+  );
 
-  const [values, setValues] = useState(() => getProfileValues(user, addresses));
+  const [values, setValues] = useState(() =>
+    getProfileValues(user, addresses)
+  );
 
   const [editing, setEditing] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
@@ -169,14 +183,21 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
 
   useEffect(() => {
     if (!profileNotice) return undefined;
-    const timer = window.setTimeout(() => setProfileNotice(null), 3500);
+
+    const timer = window.setTimeout(() => {
+      setProfileNotice(null);
+    }, 3500);
+
     return () => window.clearTimeout(timer);
   }, [profileNotice]);
 
   const saveAddressCollection = (nextAddresses) => {
     persistAddresses(nextAddresses);
     setAddresses(nextAddresses);
-    onSave({ addresses: nextAddresses });
+
+    onSave({
+      addresses: nextAddresses,
+    });
   };
 
   const update = (event) => {
@@ -192,21 +213,26 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       cleanedValue = value.replace(/\D/g, "").slice(0, 9);
     }
 
-    if (name === "city") {
-      cleanedValue = value.replace(/[^A-Za-z '-]/g, "");
-    }
-
     setValues((current) => ({
       ...current,
       [name]: cleanedValue,
     }));
 
-    if (fieldErrors[name]) setFieldErrors((current) => ({ ...current, [name]: "" }));
+    if (fieldErrors[name]) {
+      setFieldErrors((current) => ({
+        ...current,
+        [name]: "",
+      }));
+    }
 
     if (profileNotice) {
       setProfileNotice(null);
     }
   };
+
+  /* =========================
+     SAVE PROFILE
+     ========================= */
 
   const saveProfile = (event) => {
     event.preventDefault();
@@ -222,26 +248,14 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
     }
 
     const emailError = validateEmail(values.email);
+
     if (emailError) {
       nextErrors.email = emailError;
     }
 
     if (!AUSTRALIAN_MOBILE_PATTERN.test(values.mobile)) {
-      nextErrors.mobile = "Enter a valid Australian mobile number beginning with 4.";
-    }
-
-    if (values.address && !ADDRESS_PATTERN.test(values.address.trim())) {
-      nextErrors.address = "Enter a street address with a building or street number.";
-    }
-
-    /*
-     * CITY VALIDATION
-     *
-     * Only known Australian cities from the list above
-     * will be accepted.
-     */
-    if (!isValidAustralianCity(values.city)) {
-      nextErrors.city = "Please enter a valid Australian city or locality.";
+      nextErrors.mobile =
+        "Enter a valid Australian mobile number beginning with 4.";
     }
 
     if (Object.keys(nextErrors).length) {
@@ -255,17 +269,17 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       values.firstName.trim() !== savedValues.firstName ||
       values.lastName.trim() !== savedValues.lastName;
 
-    const mobileChanged = values.mobile !== savedValues.mobile;
-
-    const addressChanged =
-      values.address.trim() !== savedValues.address ||
-      normalizeCity(values.city) !== normalizeCity(savedValues.city);
+    const mobileChanged =
+      values.mobile !== savedValues.mobile;
 
     const emailChanged =
-      values.email.trim().toLowerCase() !== savedValues.email.toLowerCase();
+      values.email.trim().toLowerCase() !==
+      savedValues.email.toLowerCase();
 
     const hasChanges =
-      nameChanged || mobileChanged || addressChanged || emailChanged;
+      nameChanged ||
+      mobileChanged ||
+      emailChanged;
 
     if (!hasChanges) {
       setProfileNotice({
@@ -276,44 +290,17 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       return;
     }
 
-    let nextAddresses = addresses;
-
-    const defaultAddress =
-      addresses.find((address) => address.isDefault) ?? addresses[0];
-
-    if (values.address.trim()) {
-      const nextAddress = {
-        id: defaultAddress?.id,
-        label: defaultAddress?.label ?? "Home",
-        address: values.address.trim(),
-        city: values.city.trim(),
-        isDefault: true,
-      };
-
-      if (defaultAddress) {
-        nextAddresses = addresses.map((address) =>
-          address.id === defaultAddress.id ? nextAddress : address
-        );
-      } else {
-        nextAddresses = upsertAddress(addresses, nextAddress).addresses;
-      }
-
-      nextAddresses = setDefaultAddress(
-        nextAddresses,
-        nextAddress.id ?? nextAddresses.at(-1)?.id
-      );
-
-      persistAddresses(nextAddresses);
-      setAddresses(nextAddresses);
-    }
-
+    /*
+     * Address is deliberately not changed here.
+     * Address management is handled separately.
+     */
     const updatedUser = {
       firstName: values.firstName.trim(),
       lastName: values.lastName.trim(),
       name: `${values.firstName.trim()} ${values.lastName.trim()}`,
       email: values.email.trim().toLowerCase(),
       mobile: values.mobile,
-      addresses: nextAddresses,
+      addresses,
     };
 
     onSave(updatedUser);
@@ -328,6 +315,10 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
     setEditing(false);
   };
 
+  /* =========================
+     ADDRESS EDITOR
+     ========================= */
+
   const openAddressEditor = (address = null) => {
     setAddressError("");
 
@@ -335,12 +326,12 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       address
         ? { ...address }
         : {
-          id: null,
-          label: "",
-          address: "",
-          city: "",
-          isDefault: addresses.length === 0,
-        }
+            id: null,
+            label: "",
+            address: "",
+            city: "",
+            isDefault: addresses.length === 0,
+          }
     );
   };
 
@@ -351,20 +342,23 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       setAddressError(
         "Enter a street address with a building or street number."
       );
+
       return;
     }
 
-    /*
-     * CITY VALIDATION FOR SAVED ADDRESSES
-     */
     if (!isValidAustralianCity(addressEditor.city)) {
-      setAddressError("Please enter a valid Australian city or locality.");
+      setAddressError(
+        "Please enter a valid Australian city or locality."
+      );
+
       return;
     }
 
     const cleanedAddress = {
       ...addressEditor,
-      label: addressEditor.label.trim() || `Address ${addresses.length + 1}`,
+      label:
+        addressEditor.label.trim() ||
+        `Address ${addresses.length + 1}`,
       address: addressEditor.address.trim(),
       city: addressEditor.city.trim(),
     };
@@ -373,10 +367,15 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
 
     if (cleanedAddress.id) {
       nextAddresses = addresses.map((address) =>
-        address.id === cleanedAddress.id ? cleanedAddress : address
+        address.id === cleanedAddress.id
+          ? cleanedAddress
+          : address
       );
     } else {
-      const added = upsertAddress(addresses, cleanedAddress);
+      const added = upsertAddress(
+        addresses,
+        cleanedAddress
+      );
 
       nextAddresses = added.addresses;
       cleanedAddress.id = added.address.id;
@@ -386,7 +385,10 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
       cleanedAddress.isDefault ||
       !nextAddresses.some((address) => address.isDefault)
     ) {
-      nextAddresses = setDefaultAddress(nextAddresses, cleanedAddress.id);
+      nextAddresses = setDefaultAddress(
+        nextAddresses,
+        cleanedAddress.id
+      );
     }
 
     saveAddressCollection(nextAddresses);
@@ -399,13 +401,18 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
   };
 
   const deleteAddress = (addressId) => {
-    let nextAddresses = addresses.filter((address) => address.id !== addressId);
+    let nextAddresses = addresses.filter(
+      (address) => address.id !== addressId
+    );
 
     if (
       nextAddresses.length &&
       !nextAddresses.some((address) => address.isDefault)
     ) {
-      nextAddresses = setDefaultAddress(nextAddresses, nextAddresses[0].id);
+      nextAddresses = setDefaultAddress(
+        nextAddresses,
+        nextAddresses[0].id
+      );
     }
 
     saveAddressCollection(nextAddresses);
@@ -416,31 +423,39 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
     });
   };
 
-  const defaultAddress =
-    addresses.find((address) => address.isDefault) ?? addresses[0];
-
+  /*
+   * ONLY THESE FOUR FIELDS ARE SHOWN
+   * IN EDIT PROFILE.
+   */
   const fields = [
     ["firstName", "First name", "text"],
     ["lastName", "Last name", "text"],
-    ["email", "Email", "email"],
     ["mobile", "Mobile", "tel"],
-    ["address", "Default address", "text"],
-    ["city", "City / suburb", "text"],
+    ["email", "Email", "email"],
   ];
 
   return (
     <div className="pt-28 pb-24 sm:pt-32 lg:pt-36">
-      <PageHero onBack={onBack ?? (() => navigate("/"))} tag="Shopping" />
+      <PageHero
+        onBack={onBack ?? (() => navigate("/"))}
+        tag="Shopping"
+      />
 
       <Reveal>
         <main className="mx-auto mt-8 max-w-7xl px-margin-mobile md:px-margin-desktop">
           <section className="overflow-hidden rounded-3xl border border-white/10 bg-[#1d1b1f] shadow-2xl shadow-black/20">
-            {/* PROFILE HEADER */}
+
+            {/* =========================
+                PROFILE HEADER
+            ========================= */}
+
             <div className="relative overflow-hidden border-b border-white/10 px-6 py-7 sm:px-8 sm:py-8 lg:px-10">
               <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-primary/15 blur-3xl" />
+
               <div className="pointer-events-none absolute -bottom-24 left-1/3 h-48 w-48 rounded-full bg-primary/5 blur-3xl" />
 
               <div className="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+
                 <div className="flex items-center gap-5">
                   <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 shadow-lg shadow-primary/10">
                     <span className="material-symbols-outlined text-[34px] text-primary">
@@ -470,7 +485,10 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                     className="flex-1 rounded-xl border border-white/15 bg-white/[0.03] px-5 py-3 text-sm font-medium transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 sm:flex-none"
                     onClick={() => {
                       if (editing) {
-                        setValues(getProfileValues(user, addresses));
+                        setValues(
+                          getProfileValues(user, addresses)
+                        );
+
                         setFieldErrors({});
                         setProfileNotice(null);
                       }
@@ -497,6 +515,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                       <span className="material-symbols-outlined text-[18px]">
                         logout
                       </span>
+
                       Logout
                     </span>
                   </button>
@@ -504,7 +523,10 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
               </div>
             </div>
 
-            {/* PROFILE CONTENT */}
+            {/* =========================
+                PERSONAL INFORMATION
+            ========================= */}
+
             {editing ? (
               <form
                 className="bg-[#19181b] p-6 sm:p-8 lg:p-10"
@@ -519,19 +541,19 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                   <div className="mt-3 h-1 w-10 rounded-full bg-primary" />
 
                   <p className="mt-4 text-sm text-on-surface-variant">
-                    Keep your contact and delivery details up to date.
+                    Keep your personal and contact details up to date.
                   </p>
                 </div>
 
+                {/* EDIT PROFILE - 2 COLUMNS */}
                 <div className="grid gap-5 sm:grid-cols-2">
                   {fields.map(([name, label, type]) => (
-                    <label
-                      className={name === "address" ? "sm:col-span-2" : ""}
-                      key={name}
-                    >
+                    <label key={name}>
                       <span className="mb-2.5 block text-xs font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
                         {label}
-                        <span className="ml-1 text-primary">*</span>
+                        <span className="ml-1 text-primary">
+                          *
+                        </span>
                       </span>
 
                       <input
@@ -540,18 +562,23 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                             ? "given-name"
                             : name === "lastName"
                               ? "family-name"
-                              : name === "address"
-                                ? "street-address"
-                                : name === "city"
-                                  ? "address-level2"
-                                  : name
+                              : name
                         }
-                        className={`w-full rounded-xl border bg-[#242326] px-4 py-3.5 text-sm text-white placeholder:text-gray-500 outline-none transition-all duration-200 ${fieldErrors[name]
+                        className={`w-full rounded-xl border bg-[#242326] px-4 py-3.5 text-sm text-white placeholder:text-gray-500 outline-none transition-all duration-200 ${
+                          fieldErrors[name]
                             ? "border-error/70 focus:border-error focus:ring-2 focus:ring-error/10"
                             : "border-white/10 hover:border-white/20 focus:border-primary/70 focus:bg-[#29282b] focus:ring-4 focus:ring-primary/10"
-                          }`}
-                        inputMode={name === "mobile" ? "numeric" : undefined}
-                        maxLength={name === "mobile" ? 9 : undefined}
+                        }`}
+                        inputMode={
+                          name === "mobile"
+                            ? "numeric"
+                            : undefined
+                        }
+                        maxLength={
+                          name === "mobile"
+                            ? 9
+                            : undefined
+                        }
                         name={name}
                         onChange={update}
                         placeholder={
@@ -559,35 +586,32 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                             ? "Enter your first name"
                             : name === "lastName"
                               ? "Enter your last name"
-                              : name === "email"
-                                ? "you@example.com"
-                                : name === "mobile"
-                                  ? "4XXXXXXXX"
-                                  : name === "address"
-                                    ? "123 George Street"
-                                    : "e.g. Melbourne"
+                              : name === "mobile"
+                                ? "4XXXXXXXX"
+                                : "you@example.com"
                         }
                         type={type}
                         value={values[name]}
                       />
 
-                      {name === "city" && (
-                        <p className="mt-2 text-xs text-on-surface-variant">
-                          Enter a valid Australian city or locality.
-                        </p>
-                      )}
                       {fieldErrors[name] && (
-                        <p className="mt-2 text-xs text-error">{fieldErrors[name]}</p>
+                        <p className="mt-2 text-xs text-error">
+                          {fieldErrors[name]}
+                        </p>
                       )}
                     </label>
                   ))}
                 </div>
 
+                {/* FORM ACTIONS */}
                 <div className="mt-8 flex flex-col-reverse gap-3 border-t border-white/10 pt-7 sm:flex-row sm:items-center sm:justify-between">
                   <button
                     className="rounded-xl px-5 py-3 text-sm font-medium text-on-surface-variant transition-all hover:bg-white/5 hover:text-white"
                     onClick={() => {
-                      setValues(getProfileValues(user, addresses));
+                      setValues(
+                        getProfileValues(user, addresses)
+                      );
+
                       setFieldErrors({});
                       setProfileNotice(null);
                       setEditing(false);
@@ -605,6 +629,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                       <span className="material-symbols-outlined text-[19px]">
                         save
                       </span>
+
                       Save changes
                     </span>
                   </button>
@@ -612,6 +637,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
               </form>
             ) : (
               <div className="bg-[#19181b] p-6 sm:p-8 lg:p-10">
+
                 <div className="mb-7">
                   <h2 className="font-headline-md text-2xl text-white sm:text-3xl">
                     Personal information
@@ -620,11 +646,22 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                   <div className="mt-3 h-1 w-10 rounded-full bg-primary" />
 
                   <p className="mt-4 text-sm text-on-surface-variant">
-                    Your account details and default delivery information.
+                    Your account details and contact information.
                   </p>
                 </div>
 
-                <div className="grid gap-x-12 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+                {/* 
+                  FINAL DISPLAY LAYOUT:
+
+                  ROW 1:
+                  FIRST NAME | LAST NAME | MOBILE
+
+                  ROW 2:
+                  EMAIL
+                */}
+                <div className="grid gap-x-12 gap-y-8 sm:grid-cols-3">
+
+                  {/* FIRST NAME */}
                   <div>
                     <p className="text-xs font-medium uppercase tracking-wide text-on-surface-variant">
                       First name
@@ -635,6 +672,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                     </p>
                   </div>
 
+                  {/* LAST NAME */}
                   <div>
                     <p className="text-xs font-medium uppercase tracking-wide text-on-surface-variant">
                       Last name
@@ -645,7 +683,21 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                     </p>
                   </div>
 
+                  {/* MOBILE */}
                   <div>
+                    <p className="text-xs font-medium uppercase tracking-wide text-on-surface-variant">
+                      Mobile
+                    </p>
+
+                    <p className="mt-2 text-base font-medium text-white">
+                      {user?.mobile ||
+                        values.mobile ||
+                        "Not added"}
+                    </p>
+                  </div>
+
+                  {/* EMAIL - SECOND ROW */}
+                  <div className="sm:col-span-3">
                     <p className="text-xs font-medium uppercase tracking-wide text-on-surface-variant">
                       Email
                     </p>
@@ -655,66 +707,59 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                     </p>
                   </div>
 
-                  <div>
-                    <p className="text-xs font-medium uppercase tracking-wide text-on-surface-variant">
-                      Mobile
-                    </p>
-
-                    <p className="mt-2 text-base font-medium text-white">
-                      {user?.mobile || values.mobile || "Not added"}
-                    </p>
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <p className="text-xs font-medium uppercase tracking-wide text-on-surface-variant">
-                      Default address
-                    </p>
-
-                    <p className="mt-2 text-base font-medium text-white">
-                      {defaultAddress
-                        ? formatAddress(defaultAddress)
-                        : "Not added"}
-                    </p>
-                  </div>
                 </div>
               </div>
             )}
           </section>
-
-          {/* PROFILE SUCCESS / INFO MESSAGE */}
-          {profileNotice && (
-            <div
-              className={`mt-4 flex items-center gap-3 rounded-xl border px-4 py-3 ${profileNotice.tone === "success"
-                  ? "border-green-500/20 bg-green-500/10"
-                  : "border-primary/20 bg-primary/10"
-                }`}
-            >
-              <span
-                className={`material-symbols-outlined text-[19px] ${profileNotice.tone === "success"
-                    ? "text-green-400"
-                    : "text-primary"
-                  }`}
-              >
-                {profileNotice.tone === "success" ? "check_circle" : "info"}
-              </span>
-
-              <p
-                className={`text-sm ${profileNotice.tone === "success"
-                    ? "text-green-300"
-                    : "text-primary"
-                  }`}
-              >
-                {profileNotice.text}
-              </p>
-            </div>
-          )}
         </main>
       </Reveal>
 
-      {/* SAVED ADDRESSES */}
+      {/* =========================
+          PROFILE NOTICE
+      ========================= */}
+
+      {profileNotice && (
+        <div className="mx-auto mt-4 max-w-7xl px-margin-mobile md:px-margin-desktop">
+          <div
+            className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${
+              profileNotice.tone === "success"
+                ? "border-green-500/20 bg-green-500/10"
+                : "border-primary/20 bg-primary/10"
+            }`}
+          >
+            <span
+              className={`material-symbols-outlined text-[19px] ${
+                profileNotice.tone === "success"
+                  ? "text-green-400"
+                  : "text-primary"
+              }`}
+            >
+              {profileNotice.tone === "success"
+                ? "check_circle"
+                : "info"}
+            </span>
+
+            <p
+              className={`text-sm ${
+                profileNotice.tone === "success"
+                  ? "text-green-300"
+                  : "text-primary"
+              }`}
+            >
+              {profileNotice.text}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* =========================
+          SAVED ADDRESSES
+      ========================= */}
+
       <Reveal delay={80}>
         <section className="mx-auto mt-6 max-w-7xl px-margin-mobile md:px-margin-desktop">
           <div className="glass-panel rounded-2xl p-6 sm:p-8 lg:p-10">
+
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-2">
@@ -742,17 +787,21 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                   <span className="material-symbols-outlined text-[18px]">
                     add
                   </span>
+
                   Add new address
                 </span>
               </button>
             </div>
 
+            {/* ADDRESS EDITOR */}
             {addressEditor && (
               <form
                 className="mt-6 grid gap-5 rounded-xl border border-primary/30 bg-primary/5 p-5 sm:grid-cols-2"
                 noValidate
                 onSubmit={saveAddress}
               >
+
+                {/* ADDRESS LABEL */}
                 <label>
                   <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-on-surface-variant">
                     Address label
@@ -771,6 +820,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                   />
                 </label>
 
+                {/* CITY */}
                 <label>
                   <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-on-surface-variant">
                     City / suburb
@@ -781,7 +831,10 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                     onChange={(event) =>
                       setAddressEditor((current) => ({
                         ...current,
-                        city: event.target.value.replace(/[^A-Za-z '-]/g, ""),
+                        city: event.target.value.replace(
+                          /[^A-Za-z '-]/g,
+                          ""
+                        ),
                       }))
                     }
                     placeholder="e.g. Melbourne"
@@ -793,6 +846,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                   </p>
                 </label>
 
+                {/* STREET ADDRESS */}
                 <label className="sm:col-span-2">
                   <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-on-surface-variant">
                     Street address
@@ -811,6 +865,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                   />
                 </label>
 
+                {/* DEFAULT ADDRESS */}
                 <label className="flex items-center gap-3 text-sm sm:col-span-2">
                   <input
                     checked={addressEditor.isDefault}
@@ -824,9 +879,12 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                     type="checkbox"
                   />
 
-                  <span>Set as default delivery address</span>
+                  <span>
+                    Set as default delivery address
+                  </span>
                 </label>
 
+                {/* ADDRESS ERROR + BUTTONS */}
                 <div className="sm:col-span-2">
                   {addressError && (
                     <p className="mb-4 rounded-lg border border-error/20 bg-error/10 px-4 py-3 text-sm text-error">
@@ -854,17 +912,25 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
               </form>
             )}
 
+            {/* SAVED ADDRESS LIST */}
             {addresses.length ? (
               <div className="mt-6 space-y-3">
                 {addresses.map((address) => (
                   <SavedAddressCard
                     address={address}
                     key={address.id}
-                    onDelete={() => deleteAddress(address.id)}
-                    onEdit={() => openAddressEditor(address)}
+                    onDelete={() =>
+                      deleteAddress(address.id)
+                    }
+                    onEdit={() =>
+                      openAddressEditor(address)
+                    }
                     onSetDefault={() =>
                       saveAddressCollection(
-                        setDefaultAddress(addresses, address.id)
+                        setDefaultAddress(
+                          addresses,
+                          address.id
+                        )
                       )
                     }
                   />
@@ -885,10 +951,14 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
         </section>
       </Reveal>
 
-      {/* WISHLIST */}
+      {/* =========================
+          WISHLIST
+      ========================= */}
+
       <Reveal delay={140}>
         <section className="mx-auto mt-6 max-w-7xl px-margin-mobile md:px-margin-desktop">
           <div className="glass-panel rounded-2xl p-6 sm:p-8 lg:p-10">
+
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-2">
@@ -916,8 +986,14 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
             </div>
 
             {wishlistNotice && (
-              <div className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300" role="status">
-                <span className="material-symbols-outlined text-[18px]">check_circle</span>
+              <div
+                className="mt-5 flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-300"
+                role="status"
+              >
+                <span className="material-symbols-outlined text-[18px]">
+                  check_circle
+                </span>
+
                 {wishlistNotice}
               </div>
             )}
@@ -938,24 +1014,27 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
                     <div className="min-w-0 flex-1">
                       <Link
                         className="block truncate font-medium transition-colors hover:text-primary"
-                        to={`/product/${product.slug ??
-                          product.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")
-                          }`}
+                        to={`/product/${
+                          product.slug ??
+                          product.name
+                            .toLowerCase()
+                            .replace(/[^a-z0-9]+/g, "-")
+                        }`}
                       >
                         {product.name}
                       </Link>
 
                       <p className="mt-1 text-sm text-on-surface-variant">
-                        {formatCurrency(parsePrice(product.price))}
+                        {formatCurrency(
+                          parsePrice(product.price)
+                        )}
                       </p>
                     </div>
 
                     <button
                       aria-label={`Remove ${product.name} from wishlist`}
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-error/20 bg-error/5 text-error transition-all duration-200 hover:border-error/40 hover:bg-error/10"
-                      onClick={() => {
-                        toggleWishlist(product);
-                      }}
+                      onClick={() => toggleWishlist(product)}
                       title={`Remove ${product.name} from wishlist`}
                       type="button"
                     >
@@ -981,12 +1060,14 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
         </section>
       </Reveal>
 
-      {/* ORDER HISTORY */}
+      {/* =========================
+          ORDER HISTORY
+      ========================= */}
+
       <section className="mx-auto mt-6 max-w-7xl px-margin-mobile md:px-margin-desktop">
         <div className="glass-panel rounded-2xl p-6 sm:p-8 lg:p-10">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
 
-            {/* Heading + Description */}
             <div>
               <h2 className="font-headline-md text-2xl">
                 Order history
@@ -997,7 +1078,6 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
               </p>
             </div>
 
-            {/* Button */}
             <button
               className="rounded-lg px-5 py-2 text-sm text-white primary-gradient"
               onClick={() => navigate("/order-history")}
@@ -1009,6 +1089,7 @@ export default function Profile({ onLogout, onSave, onBack, user }) {
           </div>
         </div>
       </section>
+
     </div>
   );
 }

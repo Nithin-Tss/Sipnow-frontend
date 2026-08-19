@@ -53,7 +53,7 @@ const FOOTER_DESTINATIONS = {
   "Terms of Service": "/terms-conditions",
   "terms of service": "/terms-conditions",
   "Sommelier Service": "/#sommelier-quiz",
-  "Privacy Policy": "/terms-conditions",
+  "Privacy Policy": "/privacy-policy",
 };
 
 const getDestination = (link) => {
