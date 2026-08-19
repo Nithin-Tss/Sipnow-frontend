@@ -20,17 +20,30 @@ export default function Woodstock({
   const brandProducts = useMemo(() => {
     return products.filter((product) => {
       const brand = String(
-        product.brand || product.brandName || ""
+        product.brand ||
+          product.brandName ||
+          product.brand_name ||
+          ""
       )
         .trim()
-        .toLowerCase();
+        .toLowerCase()
+        .replace(/[-_]+/g, " ")
+        .replace(/\s+/g, " ");
 
-      const name = String(product.name || "")
+      const name = String(
+        product.name ||
+          product.productName ||
+          product.title ||
+          ""
+      )
         .trim()
-        .toLowerCase();
+        .toLowerCase()
+        .replace(/[-_]+/g, " ")
+        .replace(/\s+/g, " ");
 
       return (
         brand === "woodstock" ||
+        brand.includes("woodstock") ||
         name.includes("woodstock")
       );
     });
@@ -48,12 +61,14 @@ export default function Woodstock({
             b.salesCount ||
               b.soldCount ||
               b.unitsSold ||
+              b.totalSold ||
               0
           ) -
           Number(
             a.salesCount ||
               a.soldCount ||
               a.unitsSold ||
+              a.totalSold ||
               0
           )
       )
@@ -68,8 +83,18 @@ export default function Woodstock({
     return [...brandProducts]
       .sort(
         (a, b) =>
-          Number(b.rating || 0) -
-          Number(a.rating || 0)
+          Number(
+            b.rating ||
+              b.averageRating ||
+              b.avgRating ||
+              0
+          ) -
+          Number(
+            a.rating ||
+              a.averageRating ||
+              a.avgRating ||
+              0
+          )
       )
       .slice(0, 6);
   }, [brandProducts]);
@@ -78,7 +103,7 @@ export default function Woodstock({
     <div className="min-h-screen bg-background text-on-surface">
 
       {/* ========================================================
-          BRAND BANNER
+          WOODSTOCK BRAND BANNER
       ======================================================== */}
 
       <section className="relative w-full min-h-[740px] overflow-hidden">
@@ -114,11 +139,9 @@ export default function Woodstock({
             </h2>
 
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Discover the Woodstock collection and explore
-              a range of products from this popular brand.
+              Discover the Woodstock collection and explore a
+              range of products from this popular brand.
             </p>
-
-            
 
           </div>
 
@@ -169,10 +192,25 @@ export default function Woodstock({
 
           ) : (
 
-            <div className="glass-panel rounded-xl border border-primary/10 min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                No best selling Woodstock products available.
-              </p>
+            <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
+
+              <div className="text-center max-w-lg">
+
+                <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
+                  trending_up
+                </span>
+
+                <h3 className="font-serif text-2xl text-on-surface mb-3">
+                  Best Selling Products
+                </h3>
+
+                <p className="text-on-surface-variant leading-relaxed">
+                  Best selling Woodstock products will appear here
+                  once product sales data is available.
+                </p>
+
+              </div>
+
             </div>
 
           )}
@@ -224,10 +262,25 @@ export default function Woodstock({
 
           ) : (
 
-            <div className="glass-panel rounded-xl border border-primary/10 min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                No best rated Woodstock products available.
-              </p>
+            <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
+
+              <div className="text-center max-w-lg">
+
+                <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
+                  star
+                </span>
+
+                <h3 className="font-serif text-2xl text-on-surface mb-3">
+                  Best Rated Products
+                </h3>
+
+                <p className="text-on-surface-variant leading-relaxed">
+                  Best rated Woodstock products will appear here
+                  once product ratings are available.
+                </p>
+
+              </div>
+
             </div>
 
           )}

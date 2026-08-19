@@ -10,8 +10,7 @@ export default function HardRated({
   productsLoading = false,
   onAddToCart,
 }) {
-  const { addedProduct, handleAddToCart } =
-    useAddToCartFeedback(onAddToCart);
+  const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
 
   /*
    * ============================================================
@@ -48,12 +47,8 @@ export default function HardRated({
     return [...brandProducts]
       .sort(
         (a, b) =>
-          Number(
-            b.salesCount || b.soldCount || b.unitsSold || 0
-          ) -
-          Number(
-            a.salesCount || a.soldCount || a.unitsSold || 0
-          )
+          Number(b.salesCount || b.soldCount || b.unitsSold || 0) -
+          Number(a.salesCount || a.soldCount || a.unitsSold || 0)
       )
       .slice(0, 6);
   }, [brandProducts]);
@@ -66,17 +61,12 @@ export default function HardRated({
 
   const bestRatedProducts = useMemo(() => {
     return [...brandProducts]
-      .sort(
-        (a, b) =>
-          Number(b.rating || 0) -
-          Number(a.rating || 0)
-      )
+      .sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0))
       .slice(0, 6);
   }, [brandProducts]);
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
-
       {/* ========================================================
           BRAND BANNER
       ======================================================== */}
@@ -97,18 +87,10 @@ export default function HardRated({
 
         {/* Brand content */}
         <div className="relative z-10 min-h-[420px] md:min-h-[560px] flex items-center">
-
           <div className="w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-
-            <div className="max-w-4xl">
-        
-
-            </div>
-
+            <div className="max-w-4xl"></div>
           </div>
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -116,7 +98,6 @@ export default function HardRated({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
-
         <div className="max-w-container-max mx-auto">
 
           <div className="max-w-4xl mx-auto text-center">
@@ -130,16 +111,13 @@ export default function HardRated({
             </h2>
 
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Classic taste, made hard but also made easy. Easy to
-              drink that is. With low fizz, zesty flavour and
-              refreshment that packs a punch. Perfect for here,
-              there, and everywhere.
+              Classic taste, made hard but also made easy. Easy to drink that
+              is. With low fizz, zesty flavour and refreshment that packs a
+              punch. Perfect for here, there, and everywhere.
             </p>
 
           </div>
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -147,13 +125,9 @@ export default function HardRated({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
-
         <div className="max-w-container-max mx-auto">
-
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-
             <div>
-
               <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
                 {BRAND_NAME}
               </p>
@@ -165,34 +139,23 @@ export default function HardRated({
               <p className="mt-3 text-sm md:text-base text-on-surface-variant">
                 Discover the most popular Hard Rated products.
               </p>
-
             </div>
-
           </div>
 
           {productsLoading ? (
-
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
-
           ) : bestSellingProducts.length > 0 ? (
-
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={bestSellingProducts}
               emptyMessage=""
             />
-
           ) : (
-
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   trending_up
                 </span>
@@ -202,18 +165,13 @@ export default function HardRated({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best selling Hard Rated products will appear
-                  here once product sales data is available.
+                  Best selling Hard Rated products will appear here once product
+                  sales data is available.
                 </p>
-
               </div>
-
             </div>
-
           )}
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -221,13 +179,9 @@ export default function HardRated({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
-
         <div className="max-w-container-max mx-auto">
-
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-
             <div>
-
               <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
                 {BRAND_NAME}
               </p>
@@ -239,34 +193,23 @@ export default function HardRated({
               <p className="mt-3 text-sm md:text-base text-on-surface-variant">
                 Explore the highest-rated Hard Rated products.
               </p>
-
             </div>
-
           </div>
 
           {productsLoading ? (
-
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
-
           ) : bestRatedProducts.length > 0 ? (
-
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={bestRatedProducts}
               emptyMessage=""
             />
-
           ) : (
-
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   star
                 </span>
@@ -276,18 +219,13 @@ export default function HardRated({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best rated Hard Rated products will appear
-                  here once product ratings are available.
+                  Best rated Hard Rated products will appear here once product
+                  ratings are available.
                 </p>
-
               </div>
-
             </div>
-
           )}
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -295,11 +233,8 @@ export default function HardRated({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-24">
-
         <div className="max-w-container-max mx-auto">
-
           <div className="mb-8">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
               Our Collection
             </p>
@@ -307,24 +242,18 @@ export default function HardRated({
             <h2 className="font-serif text-3xl md:text-4xl text-on-surface">
               All Hard Rated Products
             </h2>
-
           </div>
 
           {brandProducts.length > 0 ? (
-
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={brandProducts}
               emptyMessage=""
             />
-
           ) : (
-
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   wine_bar
                 </span>
@@ -334,20 +263,14 @@ export default function HardRated({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Hard Rated products will appear here once they
-                  are available in our collection.
+                  Hard Rated products will appear here once they are available
+                  in our collection.
                 </p>
-
               </div>
-
             </div>
-
           )}
-
         </div>
-
       </section>
-
     </div>
   );
 }

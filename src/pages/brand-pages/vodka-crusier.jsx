@@ -20,20 +20,31 @@ export default function VodkaCruiser({
   const brandProducts = useMemo(() => {
     return products.filter((product) => {
       const brand = String(
-        product.brand || product.brandName || ""
+        product.brand ||
+          product.brandName ||
+          product.brand_name ||
+          ""
       )
         .trim()
-        .toLowerCase();
+        .toLowerCase()
+        .replace(/[-_]+/g, " ")
+        .replace(/\s+/g, " ");
 
-      const name = String(product.name || "")
+      const name = String(
+        product.name ||
+          product.productName ||
+          product.title ||
+          ""
+      )
         .trim()
-        .toLowerCase();
+        .toLowerCase()
+        .replace(/[-_]+/g, " ")
+        .replace(/\s+/g, " ");
 
       return (
         brand === "vodka cruiser" ||
-        brand === "vodka-cruiser" ||
-        name.includes("vodka cruiser") ||
-        name.includes("vodka-cruiser")
+        brand.includes("vodka cruiser") ||
+        name.includes("vodka cruiser")
       );
     });
   }, [products]);
@@ -43,23 +54,25 @@ export default function VodkaCruiser({
   // ============================================================
 
   const bestSellingProducts = useMemo(() => {
-    return [...brandProducts]
-      .sort(
-        (a, b) =>
-          Number(
-            b.salesCount ||
-              b.soldCount ||
-              b.unitsSold ||
-              0
-          ) -
-          Number(
-            a.salesCount ||
-              a.soldCount ||
-              a.unitsSold ||
-              0
-          )
-      )
-      .slice(0, 6);
+    const sorted = [...brandProducts].sort(
+      (a, b) =>
+        Number(
+          b.salesCount ||
+            b.soldCount ||
+            b.unitsSold ||
+            b.totalSold ||
+            0
+        ) -
+        Number(
+          a.salesCount ||
+            a.soldCount ||
+            a.unitsSold ||
+            a.totalSold ||
+            0
+        )
+    );
+
+    return sorted.slice(0, 6);
   }, [brandProducts]);
 
   // ============================================================
@@ -70,8 +83,18 @@ export default function VodkaCruiser({
     return [...brandProducts]
       .sort(
         (a, b) =>
-          Number(b.rating || 0) -
-          Number(a.rating || 0)
+          Number(
+            b.rating ||
+              b.averageRating ||
+              b.avgRating ||
+              0
+          ) -
+          Number(
+            a.rating ||
+              a.averageRating ||
+              a.avgRating ||
+              0
+          )
       )
       .slice(0, 6);
   }, [brandProducts]);
@@ -116,12 +139,9 @@ export default function VodkaCruiser({
             </h2>
 
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Discover the Vodka Cruiser collection, featuring
-              refreshing vodka-based drinks blended with
-              delicious fruit flavours.
+              Discover the Vodka Cruiser collection and explore
+              a range of refreshing products from this popular brand.
             </p>
-
-            
 
           </div>
 
@@ -172,11 +192,24 @@ export default function VodkaCruiser({
 
           ) : (
 
-            <div className="glass-panel rounded-xl border border-primary/10 min-h-[200px] flex items-center justify-center">
+            <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
 
-              <p className="text-on-surface-variant">
-                No best selling Vodka Cruiser products available.
-              </p>
+              <div className="text-center max-w-lg">
+
+                <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
+                  trending_up
+                </span>
+
+                <h3 className="font-serif text-2xl text-on-surface mb-3">
+                  Best Selling Products
+                </h3>
+
+                <p className="text-on-surface-variant leading-relaxed">
+                  Best selling Vodka Cruiser products will appear here
+                  once product sales data is available.
+                </p>
+
+              </div>
 
             </div>
 
@@ -229,11 +262,24 @@ export default function VodkaCruiser({
 
           ) : (
 
-            <div className="glass-panel rounded-xl border border-primary/10 min-h-[200px] flex items-center justify-center">
+            <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
 
-              <p className="text-on-surface-variant">
-                No best rated Vodka Cruiser products available.
-              </p>
+              <div className="text-center max-w-lg">
+
+                <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
+                  star
+                </span>
+
+                <h3 className="font-serif text-2xl text-on-surface mb-3">
+                  Best Rated Products
+                </h3>
+
+                <p className="text-on-surface-variant leading-relaxed">
+                  Best rated Vodka Cruiser products will appear here
+                  once product ratings are available.
+                </p>
+
+              </div>
 
             </div>
 
@@ -287,8 +333,8 @@ export default function VodkaCruiser({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Vodka Cruiser products will appear here once
-                  they are available in our collection.
+                  Vodka Cruiser products will appear here once they
+                  are available in our collection.
                 </p>
 
               </div>

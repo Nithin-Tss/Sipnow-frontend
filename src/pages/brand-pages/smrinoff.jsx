@@ -10,8 +10,7 @@ export default function Smrinoff({
   productsLoading = false,
   onAddToCart,
 }) {
-  const { addedProduct, handleAddToCart } =
-    useAddToCartFeedback(onAddToCart);
+  const { addedProduct, handleAddToCart } = useAddToCartFeedback(onAddToCart);
 
   /*
    * ============================================================
@@ -21,9 +20,7 @@ export default function Smrinoff({
 
   const brandProducts = useMemo(() => {
     return products.filter((product) => {
-      const brand = String(
-        product.brand || product.brandName || ""
-      )
+      const brand = String(product.brand || product.brandName || "")
         .trim()
         .toLowerCase();
 
@@ -31,10 +28,7 @@ export default function Smrinoff({
         .trim()
         .toLowerCase();
 
-      return (
-        brand === "smirnoff" ||
-        name.includes("smirnoff")
-      );
+      return brand === "smirnoff" || name.includes("smirnoff");
     });
   }, [products]);
 
@@ -48,18 +42,8 @@ export default function Smrinoff({
     return [...brandProducts]
       .sort(
         (a, b) =>
-          Number(
-            b.salesCount ||
-              b.soldCount ||
-              b.unitsSold ||
-              0
-          ) -
-          Number(
-            a.salesCount ||
-              a.soldCount ||
-              a.unitsSold ||
-              0
-          )
+          Number(b.salesCount || b.soldCount || b.unitsSold || 0) -
+          Number(a.salesCount || a.soldCount || a.unitsSold || 0)
       )
       .slice(0, 6);
   }, [brandProducts]);
@@ -72,17 +56,12 @@ export default function Smrinoff({
 
   const bestRatedProducts = useMemo(() => {
     return [...brandProducts]
-      .sort(
-        (a, b) =>
-          Number(b.rating || 0) -
-          Number(a.rating || 0)
-      )
+      .sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0))
       .slice(0, 6);
   }, [brandProducts]);
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
-
       {/* ========================================================
           BRAND BANNER
       ======================================================== */}
@@ -103,17 +82,10 @@ export default function Smrinoff({
 
         {/* Brand content */}
         <div className="relative z-10 min-h-[420px] md:min-h-[560px] flex items-center">
-
           <div className="w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-
-            <div className="max-w-4xl">
-
-            </div>
-
+            <div className="max-w-4xl"></div>
           </div>
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -121,7 +93,6 @@ export default function Smrinoff({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
-
         <div className="max-w-container-max mx-auto">
 
           <div className="max-w-4xl mx-auto text-center">
@@ -135,17 +106,14 @@ export default function Smrinoff({
             </h2>
 
             <p className="mt-6 text-base md:text-lg leading-relaxed text-on-surface-variant">
-              Discover the Smirnoff collection, featuring
-              a range of products crafted for refreshing
-              taste and enjoyable occasions.
+              Discover the Smirnoff collection, featuring a range of products
+              crafted for refreshing taste and enjoyable occasions.
             </p>
 
            
 
           </div>
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -153,13 +121,9 @@ export default function Smrinoff({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
-
         <div className="max-w-container-max mx-auto">
-
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-
             <div>
-
               <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
                 {BRAND_NAME}
               </p>
@@ -171,34 +135,23 @@ export default function Smrinoff({
               <p className="mt-3 text-sm md:text-base text-on-surface-variant">
                 Discover the most popular Smirnoff products.
               </p>
-
             </div>
-
           </div>
 
           {productsLoading ? (
-
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
-
           ) : bestSellingProducts.length > 0 ? (
-
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={bestSellingProducts}
               emptyMessage=""
             />
-
           ) : (
-
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   trending_up
                 </span>
@@ -208,18 +161,13 @@ export default function Smrinoff({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best selling Smirnoff products will appear
-                  here once product sales data is available.
+                  Best selling Smirnoff products will appear here once product
+                  sales data is available.
                 </p>
-
               </div>
-
             </div>
-
           )}
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -227,13 +175,9 @@ export default function Smrinoff({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-20">
-
         <div className="max-w-container-max mx-auto">
-
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-
             <div>
-
               <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
                 {BRAND_NAME}
               </p>
@@ -245,34 +189,23 @@ export default function Smrinoff({
               <p className="mt-3 text-sm md:text-base text-on-surface-variant">
                 Explore the highest-rated Smirnoff products.
               </p>
-
             </div>
-
           </div>
 
           {productsLoading ? (
-
             <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-on-surface-variant">
-                Loading products...
-              </p>
+              <p className="text-on-surface-variant">Loading products...</p>
             </div>
-
           ) : bestRatedProducts.length > 0 ? (
-
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={bestRatedProducts}
               emptyMessage=""
             />
-
           ) : (
-
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   star
                 </span>
@@ -282,18 +215,13 @@ export default function Smrinoff({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Best rated Smirnoff products will appear
-                  here once product ratings are available.
+                  Best rated Smirnoff products will appear here once product
+                  ratings are available.
                 </p>
-
               </div>
-
             </div>
-
           )}
-
         </div>
-
       </section>
 
       {/* ========================================================
@@ -301,11 +229,8 @@ export default function Smrinoff({
       ======================================================== */}
 
       <section className="px-margin-mobile md:px-margin-desktop pb-24">
-
         <div className="max-w-container-max mx-auto">
-
           <div className="mb-8">
-
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
               Our Collection
             </p>
@@ -313,24 +238,18 @@ export default function Smrinoff({
             <h2 className="font-serif text-3xl md:text-4xl text-on-surface">
               All Smirnoff Products
             </h2>
-
           </div>
 
           {brandProducts.length > 0 ? (
-
             <ProductGrid
               addedProduct={addedProduct}
               onAddToCart={handleAddToCart}
               products={brandProducts}
               emptyMessage=""
             />
-
           ) : (
-
             <div className="glass-panel rounded-xl border border-primary/10 min-h-[240px] flex items-center justify-center px-6">
-
               <div className="text-center max-w-lg">
-
                 <span className="material-symbols-outlined text-5xl text-primary/40 mb-4">
                   local_bar
                 </span>
@@ -340,20 +259,14 @@ export default function Smrinoff({
                 </h3>
 
                 <p className="text-on-surface-variant leading-relaxed">
-                  Smirnoff products will appear here once they
-                  are available in our collection.
+                  Smirnoff products will appear here once they are available in
+                  our collection.
                 </p>
-
               </div>
-
             </div>
-
           )}
-
         </div>
-
       </section>
-
     </div>
   );
 }

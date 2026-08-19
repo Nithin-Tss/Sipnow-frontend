@@ -1,1 +1,0 @@
-import{j as o}from"./index-DbUFBrwn.js";import{P as r}from"./PageHero-QK-IJbPY.js";import"./Reveal-CjEOGKwD.js";const t="Tread Softly";function a({onBack:e}){return o.jsx("div",{className:"min-h-screen bg-background text-on-surface py-16 md:py-24",children:o.jsx(r,{onBack:e,tag:"Brand",title:t,description:`The ${t} collection is coming soon.`})})}export{a as default};
