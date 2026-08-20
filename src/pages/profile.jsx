@@ -17,8 +17,7 @@ import {
 } from "../utils/validation.js";
 import { validateEmail } from "../utils/emailValidation.js";
 
-const ADDRESS_PATTERN =
-  /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./#-]{10,100}$/;
+const ADDRESS_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9\s,./#-]{10,100}$/;
 
 /* Australian city validation */
 const VALID_AUSTRALIAN_CITIES = [
@@ -83,10 +82,7 @@ function normalizeMobile(value) {
 }
 
 function getProfileValues(user) {
-  const nameParts = (user?.name ?? "")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
+  const nameParts = (user?.name ?? "").trim().split(/\s+/).filter(Boolean);
 
   return {
     firstName: user?.firstName ?? nameParts[0] ?? "",
@@ -96,12 +92,7 @@ function getProfileValues(user) {
   };
 }
 
-function SavedAddressCard({
-  address,
-  onDelete,
-  onEdit,
-  onSetDefault,
-}) {
+function SavedAddressCard({ address, onDelete, onEdit, onSetDefault }) {
   return (
     <article className="rounded-xl border border-primary/20 bg-primary/5 p-4 transition-all duration-300 hover:border-primary/40 hover:bg-primary/10">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -153,27 +144,14 @@ function SavedAddressCard({
   );
 }
 
-export default function Profile({
-  onLogout,
-  onSave,
-  onBack,
-  user,
-}) {
+export default function Profile({ onLogout, onSave, onBack, user }) {
   const navigate = useNavigate();
 
-  const {
-    toggleWishlist,
-    wishlistItems,
-    wishlistNotice,
-  } = useWishlist();
+  const { toggleWishlist, wishlistItems, wishlistNotice } = useWishlist();
 
-  const [addresses, setAddresses] = useState(() =>
-    readSavedAddresses(user)
-  );
+  const [addresses, setAddresses] = useState(() => readSavedAddresses(user));
 
-  const [values, setValues] = useState(() =>
-    getProfileValues(user, addresses)
-  );
+  const [values, setValues] = useState(() => getProfileValues(user, addresses));
 
   const [editing, setEditing] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
@@ -269,17 +247,12 @@ export default function Profile({
       values.firstName.trim() !== savedValues.firstName ||
       values.lastName.trim() !== savedValues.lastName;
 
-    const mobileChanged =
-      values.mobile !== savedValues.mobile;
+    const mobileChanged = values.mobile !== savedValues.mobile;
 
     const emailChanged =
-      values.email.trim().toLowerCase() !==
-      savedValues.email.toLowerCase();
+      values.email.trim().toLowerCase() !== savedValues.email.toLowerCase();
 
-    const hasChanges =
-      nameChanged ||
-      mobileChanged ||
-      emailChanged;
+    const hasChanges = nameChanged || mobileChanged || emailChanged;
 
     if (!hasChanges) {
       setProfileNotice({
@@ -347,18 +320,14 @@ export default function Profile({
     }
 
     if (!isValidAustralianCity(addressEditor.city)) {
-      setAddressError(
-        "Please enter a valid Australian city or locality."
-      );
+      setAddressError("Please enter a valid Australian city or locality.");
 
       return;
     }
 
     const cleanedAddress = {
       ...addressEditor,
-      label:
-        addressEditor.label.trim() ||
-        `Address ${addresses.length + 1}`,
+      label: addressEditor.label.trim() || `Address ${addresses.length + 1}`,
       address: addressEditor.address.trim(),
       city: addressEditor.city.trim(),
     };
@@ -367,15 +336,10 @@ export default function Profile({
 
     if (cleanedAddress.id) {
       nextAddresses = addresses.map((address) =>
-        address.id === cleanedAddress.id
-          ? cleanedAddress
-          : address
+        address.id === cleanedAddress.id ? cleanedAddress : address
       );
     } else {
-      const added = upsertAddress(
-        addresses,
-        cleanedAddress
-      );
+      const added = upsertAddress(addresses, cleanedAddress);
 
       nextAddresses = added.addresses;
       cleanedAddress.id = added.address.id;
@@ -385,10 +349,7 @@ export default function Profile({
       cleanedAddress.isDefault ||
       !nextAddresses.some((address) => address.isDefault)
     ) {
-      nextAddresses = setDefaultAddress(
-        nextAddresses,
-        cleanedAddress.id
-      );
+      nextAddresses = setDefaultAddress(nextAddresses, cleanedAddress.id);
     }
 
     saveAddressCollection(nextAddresses);
@@ -401,18 +362,13 @@ export default function Profile({
   };
 
   const deleteAddress = (addressId) => {
-    let nextAddresses = addresses.filter(
-      (address) => address.id !== addressId
-    );
+    let nextAddresses = addresses.filter((address) => address.id !== addressId);
 
     if (
       nextAddresses.length &&
       !nextAddresses.some((address) => address.isDefault)
     ) {
-      nextAddresses = setDefaultAddress(
-        nextAddresses,
-        nextAddresses[0].id
-      );
+      nextAddresses = setDefaultAddress(nextAddresses, nextAddresses[0].id);
     }
 
     saveAddressCollection(nextAddresses);
@@ -436,15 +392,11 @@ export default function Profile({
 
   return (
     <div className="pt-28 pb-24 sm:pt-32 lg:pt-36">
-      <PageHero
-        onBack={onBack ?? (() => navigate("/"))}
-        tag="Shopping"
-      />
+      <PageHero onBack={onBack ?? (() => navigate("/"))} tag="Shopping" />
 
       <Reveal>
         <main className="mx-auto mt-8 max-w-7xl px-margin-mobile md:px-margin-desktop">
           <section className="overflow-hidden rounded-3xl border border-white/10 bg-[#1d1b1f] shadow-2xl shadow-black/20">
-
             {/* =========================
                 PROFILE HEADER
             ========================= */}
@@ -455,7 +407,6 @@ export default function Profile({
               <div className="pointer-events-none absolute -bottom-24 left-1/3 h-48 w-48 rounded-full bg-primary/5 blur-3xl" />
 
               <div className="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
-
                 <div className="flex items-center gap-5">
                   <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 shadow-lg shadow-primary/10">
                     <span className="material-symbols-outlined text-[34px] text-primary">
@@ -485,9 +436,7 @@ export default function Profile({
                     className="flex-1 rounded-xl border border-white/15 bg-white/[0.03] px-5 py-3 text-sm font-medium transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 sm:flex-none"
                     onClick={() => {
                       if (editing) {
-                        setValues(
-                          getProfileValues(user, addresses)
-                        );
+                        setValues(getProfileValues(user, addresses));
 
                         setFieldErrors({});
                         setProfileNotice(null);
@@ -515,7 +464,6 @@ export default function Profile({
                       <span className="material-symbols-outlined text-[18px]">
                         logout
                       </span>
-
                       Logout
                     </span>
                   </button>
@@ -551,9 +499,7 @@ export default function Profile({
                     <label key={name}>
                       <span className="mb-2.5 block text-xs font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
                         {label}
-                        <span className="ml-1 text-primary">
-                          *
-                        </span>
+                        <span className="ml-1 text-primary">*</span>
                       </span>
 
                       <input
@@ -569,16 +515,8 @@ export default function Profile({
                             ? "border-error/70 focus:border-error focus:ring-2 focus:ring-error/10"
                             : "border-white/10 hover:border-white/20 focus:border-primary/70 focus:bg-[#29282b] focus:ring-4 focus:ring-primary/10"
                         }`}
-                        inputMode={
-                          name === "mobile"
-                            ? "numeric"
-                            : undefined
-                        }
-                        maxLength={
-                          name === "mobile"
-                            ? 9
-                            : undefined
-                        }
+                        inputMode={name === "mobile" ? "numeric" : undefined}
+                        maxLength={name === "mobile" ? 9 : undefined}
                         name={name}
                         onChange={update}
                         placeholder={
@@ -608,9 +546,7 @@ export default function Profile({
                   <button
                     className="rounded-xl px-5 py-3 text-sm font-medium text-on-surface-variant transition-all hover:bg-white/5 hover:text-white"
                     onClick={() => {
-                      setValues(
-                        getProfileValues(user, addresses)
-                      );
+                      setValues(getProfileValues(user, addresses));
 
                       setFieldErrors({});
                       setProfileNotice(null);
@@ -629,7 +565,6 @@ export default function Profile({
                       <span className="material-symbols-outlined text-[19px]">
                         save
                       </span>
-
                       Save changes
                     </span>
                   </button>
@@ -637,7 +572,6 @@ export default function Profile({
               </form>
             ) : (
               <div className="bg-[#19181b] p-6 sm:p-8 lg:p-10">
-
                 <div className="mb-7">
                   <h2 className="font-headline-md text-2xl text-white sm:text-3xl">
                     Personal information
@@ -660,7 +594,6 @@ export default function Profile({
                   EMAIL
                 */}
                 <div className="grid gap-x-12 gap-y-8 sm:grid-cols-3">
-
                   {/* FIRST NAME */}
                   <div>
                     <p className="text-xs font-medium uppercase tracking-wide text-on-surface-variant">
@@ -690,9 +623,7 @@ export default function Profile({
                     </p>
 
                     <p className="mt-2 text-base font-medium text-white">
-                      {user?.mobile ||
-                        values.mobile ||
-                        "Not added"}
+                      {user?.mobile || values.mobile || "Not added"}
                     </p>
                   </div>
 
@@ -706,7 +637,6 @@ export default function Profile({
                       {user?.email ?? values.email}
                     </p>
                   </div>
-
                 </div>
               </div>
             )}
@@ -734,9 +664,7 @@ export default function Profile({
                   : "text-primary"
               }`}
             >
-              {profileNotice.tone === "success"
-                ? "check_circle"
-                : "info"}
+              {profileNotice.tone === "success" ? "check_circle" : "info"}
             </span>
 
             <p
@@ -759,7 +687,6 @@ export default function Profile({
       <Reveal delay={80}>
         <section className="mx-auto mt-6 max-w-7xl px-margin-mobile md:px-margin-desktop">
           <div className="glass-panel rounded-2xl p-6 sm:p-8 lg:p-10">
-
             <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-2">
@@ -787,7 +714,6 @@ export default function Profile({
                   <span className="material-symbols-outlined text-[18px]">
                     add
                   </span>
-
                   Add new address
                 </span>
               </button>
@@ -800,7 +726,6 @@ export default function Profile({
                 noValidate
                 onSubmit={saveAddress}
               >
-
                 {/* ADDRESS LABEL */}
                 <label>
                   <span className="mb-2 block text-xs font-medium uppercase tracking-wider text-on-surface-variant">
@@ -831,10 +756,7 @@ export default function Profile({
                     onChange={(event) =>
                       setAddressEditor((current) => ({
                         ...current,
-                        city: event.target.value.replace(
-                          /[^A-Za-z '-]/g,
-                          ""
-                        ),
+                        city: event.target.value.replace(/[^A-Za-z '-]/g, ""),
                       }))
                     }
                     placeholder="e.g. Melbourne"
@@ -879,9 +801,7 @@ export default function Profile({
                     type="checkbox"
                   />
 
-                  <span>
-                    Set as default delivery address
-                  </span>
+                  <span>Set as default delivery address</span>
                 </label>
 
                 {/* ADDRESS ERROR + BUTTONS */}
@@ -919,18 +839,11 @@ export default function Profile({
                   <SavedAddressCard
                     address={address}
                     key={address.id}
-                    onDelete={() =>
-                      deleteAddress(address.id)
-                    }
-                    onEdit={() =>
-                      openAddressEditor(address)
-                    }
+                    onDelete={() => deleteAddress(address.id)}
+                    onEdit={() => openAddressEditor(address)}
                     onSetDefault={() =>
                       saveAddressCollection(
-                        setDefaultAddress(
-                          addresses,
-                          address.id
-                        )
+                        setDefaultAddress(addresses, address.id)
                       )
                     }
                   />
@@ -958,7 +871,6 @@ export default function Profile({
       <Reveal delay={140}>
         <section className="mx-auto mt-6 max-w-7xl px-margin-mobile md:px-margin-desktop">
           <div className="glass-panel rounded-2xl p-6 sm:p-8 lg:p-10">
-
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-2">
@@ -1016,18 +928,14 @@ export default function Profile({
                         className="block truncate font-medium transition-colors hover:text-primary"
                         to={`/product/${
                           product.slug ??
-                          product.name
-                            .toLowerCase()
-                            .replace(/[^a-z0-9]+/g, "-")
+                          product.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")
                         }`}
                       >
                         {product.name}
                       </Link>
 
                       <p className="mt-1 text-sm text-on-surface-variant">
-                        {formatCurrency(
-                          parsePrice(product.price)
-                        )}
+                        {formatCurrency(parsePrice(product.price))}
                       </p>
                     </div>
 
@@ -1067,11 +975,8 @@ export default function Profile({
       <section className="mx-auto mt-6 max-w-7xl px-margin-mobile md:px-margin-desktop">
         <div className="glass-panel rounded-2xl p-6 sm:p-8 lg:p-10">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-
             <div>
-              <h2 className="font-headline-md text-2xl">
-                Order history
-              </h2>
+              <h2 className="font-headline-md text-2xl">Order history</h2>
 
               <p className="mt-2 text-sm text-on-surface-variant">
                 View previous purchases and open individual order details.
@@ -1085,11 +990,9 @@ export default function Profile({
             >
               View order history
             </button>
-
           </div>
         </div>
       </section>
-
     </div>
   );
 }

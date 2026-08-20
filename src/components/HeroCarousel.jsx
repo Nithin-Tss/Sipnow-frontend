@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useHeroSlides } from "../hooks/useContent.js";
+import { useHeroSlides, useInStorePromotions } from "../hooks/useContent.js";
 import { getProductSlug, parsePriceParts } from "../utils/productHelpers.js";
 
 export default function HeroCarousel() {
   const { data: heroSlides } = useHeroSlides();
+  const { data: inStorePromotions } = useInStorePromotions();
   const navigate = useNavigate();
 
   const handlePromotionClick = (product) => {
@@ -148,7 +149,7 @@ export default function HeroCarousel() {
             </div>
             {!slide.imageOnly && (
               <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full relative z-10 grid lg:grid-cols-2 items-center gap-16">
-                {slide.promotions ? (
+                {slide.showPromotions ? (
                   <div className="lg:col-span-2 grid items-center gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,7fr)] lg:gap-10">
                     <div className="space-y-4 lg:order-1">
                       <p className="font-label-md text-xs uppercase tracking-[0.28em] text-primary">
@@ -166,7 +167,7 @@ export default function HeroCarousel() {
                       </p>
                     </div>
                     <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:order-2 lg:gap-8">
-                      {slide.promotions.map((product) => {
+                      {inStorePromotions.slice(0, 4).map((product) => {
                         const { dollars, cents } = parsePriceParts(
                           product.price
                         );
