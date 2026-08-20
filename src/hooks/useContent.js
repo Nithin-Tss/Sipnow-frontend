@@ -62,6 +62,15 @@ export function useCategories() {
   );
 }
 
+export function useBrands() {
+  return useApiData("/brands?perPage=1000", [], (json) =>
+    (json.items || []).map((brand) => ({
+      ...brand,
+      slug: brand.slug || brand._id,
+    }))
+  );
+}
+
 /** Footer navigation is site UI structure, not catalog/content data. */
 export function useFooterColumns() {
   const footerColumns = [
@@ -106,12 +115,45 @@ export function useHeroSlides() {
 }
 
 export function useInStorePromotions() {
-  return useApiData("/offers/active", [], (json) => {
+  return useApiData("/in-store-promotions/active", [], (json) => {
     const promotions = [];
+    const items = json.items || [];
+
+    if (items.length > 0) {
+      for (const item of items) {
+        const product = item.product || {};
+        if (!product.name) continue;
+
+        const price = Number(product.price || 0);
+        const discounted = calculateDiscountedPrice(
+          price,
+          item.discountType || "none",
+          item.discountValue || 0
+        );
+
+        promotions.push({
+          _id: item._id,
+          image: resolveImageUrl(product.image),
+          icon: "wine_bar",
+          badgeText: formatDiscountBadge(
+            item.discountType || "none",
+            item.discountValue || 0
+          ),
+          category: product.category,
+          name: product.name,
+          rating: product.rating ?? 0,
+          reviewCount: product.reviewCount ?? 0,
+          originalPrice: `$${price.toFixed(2)}`,
+          price: `$${discounted.toFixed(2)}`,
+          promoLabel: item.promoLabel || "In-store only",
+        });
+      }
+      return promotions;
+    }
 
     for (const offer of json.offers || []) {
       for (const product of offer.applicableProducts || []) {
-        const price = Number(product.price);
+        const price = Number(product.price || 0);
         const discounted = calculateDiscountedPrice(
           price,
           offer.discountType,

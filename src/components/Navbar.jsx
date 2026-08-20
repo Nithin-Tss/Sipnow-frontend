@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useNavMenus } from "../hooks/useContent.js";
-import { matchBrands } from "../utils/brandDirectory.js";
+import { createBrandDirectory, matchBrands } from "../utils/brandDirectory.js";
 import { getProductSlug } from "../utils/productHelpers.js";
 import {
   MAX_SEARCH_LENGTH,
@@ -194,6 +194,7 @@ export default function Navbar({
   wishlistCount = 0,
   products = [],
   user,
+  brands = [],
 }) {
   const [scrolled, setScrolled] = useState(false);
 
@@ -220,6 +221,26 @@ export default function Navbar({
   const navigate = useNavigate();
 
   const { data: navMenus = [] } = useNavMenus();
+  const brandDirectory = useMemo(() => createBrandDirectory(brands), [brands]);
+  const visibleNavMenus = useMemo(
+    () =>
+      navMenus
+        .map((menu) =>
+          menu.label === "Brands"
+            ? {
+                ...menu,
+                columns: [
+                  {
+                    heading: "Brands",
+                    items: brandDirectory.map((brand) => brand.name),
+                  },
+                ],
+              }
+            : menu
+        )
+        .filter((menu) => menu.label !== "Brands" || brandDirectory.length > 0),
+    [brandDirectory, navMenus]
+  );
 
   // ========================================
   // SCROLL
@@ -328,8 +349,8 @@ export default function Navbar({
   }, [normalizedTerm, products]);
 
   const brandMatches = useMemo(
-    () => matchBrands(normalizedTerm),
-    [normalizedTerm]
+    () => matchBrands(normalizedTerm, brands),
+    [brands, normalizedTerm]
   );
 
   // ========================================
@@ -648,7 +669,7 @@ export default function Navbar({
 
       <div className="hidden lg:block bg-surface-container-low border-t border-t-white/5 border-b border-b-primary/25">
         <div className="w-full pl-margin-desktop pr-margin-desktop flex items-center gap-6 xl:gap-8 h-12">
-          {navMenus.map((menu) => (
+          {visibleNavMenus.map((menu) => (
             <div
               className="nav-item h-full flex items-center"
               key={menu.label}
@@ -748,16 +769,18 @@ export default function Navbar({
         id="mobile-nav-panel"
       >
         <div className="glass-panel border-t border-outline-variant/20 px-margin-mobile py-6 space-y-6">
-          {mobileNavLinks.map((link) => (
-            <Link
-              className="block font-label-md text-label-md text-on-surface/80 hover:text-primary transition-colors tracking-wide"
-              key={link}
-              onClick={closeMenus}
-              to={TOP_LEVEL_ROUTES[link] || `/${slugify(link)}`}
-            >
-              {link}
-            </Link>
-          ))}
+          {mobileNavLinks
+            .filter((link) => link !== "Brands" || brandDirectory.length > 0)
+            .map((link) => (
+              <Link
+                className="block font-label-md text-label-md text-on-surface/80 hover:text-primary transition-colors tracking-wide"
+                key={link}
+                onClick={closeMenus}
+                to={TOP_LEVEL_ROUTES[link] || `/${slugify(link)}`}
+              >
+                {link}
+              </Link>
+            ))}
 
           <Link
             className="block font-label-md text-label-md text-on-surface/80 hover:text-primary transition-colors tracking-wide"

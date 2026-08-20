@@ -23,7 +23,11 @@ export function useProducts() {
     apiGet("/products?limit=1000")
       .then((data) => {
         if (cancelled) return;
-        setProducts((data.items || []).map(adaptProduct));
+        setProducts(
+          (data.items || [])
+            .filter((product) => product.verified === true)
+            .map(adaptProduct)
+        );
       })
       .catch((err) => {
         if (cancelled) return;

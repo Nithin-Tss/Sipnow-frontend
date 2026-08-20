@@ -13,6 +13,7 @@ import {
   readSavedAddresses,
   upsertAddress,
 } from "../utils/addressStorage.js";
+import { API_URL } from "../utils/api.js";
 
 /*
  * ============================================================
@@ -109,12 +110,6 @@ const VALID_CITIES = [
   "Katherine",
 ];
 
-const COUPONS = {
-  SIPSAVE10: 10,
-  SIPSAVE15: 15,
-  SIPNOW25: 25,
-};
-
 // Registration stores an Australian mobile without +61 or the leading 0.
 // Checkout accepts those common entry formats and persists the same canonical
 // nine-digit value so a valid account mobile cannot be rejected at checkout.
@@ -164,7 +159,7 @@ export default function Checkout({
 
   const [couponCode, setCouponCode] = useState("");
   const [giftCardCode, setGiftCardCode] = useState("");
-  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
 
   /*
    * Message displayed after applying
@@ -230,7 +225,7 @@ export default function Checkout({
   /*
    * Calculate coupon discount.
    */
-  const discount = (subtotal * couponDiscount) / 100;
+  const discount = Number(appliedCoupon?.discountAmount || 0);
 
   /*
    * Calculate final order total.
@@ -243,7 +238,7 @@ export default function Checkout({
    * ==========================================================
    */
 
-  const submit = (event) => {
+  const submit = async (event) => {
     /*
      * Prevent normal browser form submission.
      */
@@ -386,7 +381,8 @@ export default function Checkout({
       },
       deliveryAddress: fulfilment === "delivery" ? deliveryAddress : null,
       couponCode: couponCode.trim(),
-      couponDiscount,
+      couponId: appliedCoupon?.id || "",
+      couponDiscount: discount,
       discount,
       fulfilment,
       giftCardCode: giftCardCode.trim(),
@@ -402,6 +398,16 @@ export default function Checkout({
      */
 
     try {
+      const response = await fetch(`${API_URL}/orders/storefront`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(order),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.message || "We could not place your order.");
+      }
+
       const previousOrders = readPreviousOrders();
 
       /*
@@ -422,9 +428,10 @@ export default function Checkout({
        * Notify App.jsx only after the complete order record is persisted.
        */
       onOrderComplete();
-    } catch {
+    } catch (error) {
       setSubmitError(
-        "We could not save your order. Your cart is still available—please try again."
+        error.message ||
+          "We could not save your order. Your cart is still available—please try again."
       );
     }
   };
@@ -520,7 +527,7 @@ export default function Checkout({
    * ==========================================================
    */
 
-  const applyCoupon = () => {
+  const applyCoupon = async () => {
     const code = couponCode.trim().toUpperCase();
 
     /*
@@ -528,7 +535,7 @@ export default function Checkout({
      */
     if (!code) {
       setCodeNotice("Please enter a coupon code.");
-      setCouponDiscount(0);
+      setAppliedCoupon(null);
       return;
     }
 
@@ -537,25 +544,27 @@ export default function Checkout({
      */
     if (!/^[A-Z0-9-]{3,20}$/.test(code)) {
       setCodeNotice("Enter a valid coupon code.");
-      setCouponDiscount(0);
+      setAppliedCoupon(null);
       return;
     }
 
-    /*
-     * Check whether the coupon exists.
-     */
-    if (!COUPONS[code]) {
-      setCodeNotice("Invalid or expired coupon code.");
-      setCouponDiscount(0);
-      return;
+    try {
+      const response = await fetch(`${API_URL}/coupons/validate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, subtotal }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.valid) {
+        throw new Error(result.message || "Invalid or expired coupon code.");
+      }
+      setCouponCode(result.coupon.code);
+      setAppliedCoupon(result.coupon);
+      setCodeNotice(result.message);
+    } catch (error) {
+      setAppliedCoupon(null);
+      setCodeNotice(error.message);
     }
-
-    /*
-     * Apply coupon.
-     */
-    setCouponCode(code);
-    setCouponDiscount(COUPONS[code]);
-    setCodeNotice(`Coupon ${code} applied successfully.`);
   };
 
   /*
@@ -963,9 +972,9 @@ export default function Checkout({
             </div>
 
             {/* Discount */}
-            {couponDiscount > 0 && (
+            {discount > 0 && (
               <div className="flex justify-between text-on-surface-variant">
-                <span>Discount ({couponDiscount}%)</span>
+                <span>Discount ({couponCode})</span>
 
                 <span>-{formatCurrency(discount)}</span>
               </div>

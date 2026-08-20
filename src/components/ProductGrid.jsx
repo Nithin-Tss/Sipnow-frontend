@@ -28,7 +28,7 @@ export default function ProductGrid({
         return (
           <div
             id={`product-${slug}`}
-            key={product.name}
+            key={product._id ?? product.name}
             className="scroll-mt-36 h-full"
           >
             <ProductCard

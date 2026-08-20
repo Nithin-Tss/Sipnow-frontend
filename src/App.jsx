@@ -12,6 +12,7 @@ import AmbientBackground from "./components/AmbientBackground.jsx";
 import Navbar from "./components/Navbar.jsx";
 import QuizModal from "./components/QuizModal.jsx";
 import { useProducts } from "./hooks/useProducts.js";
+import { useBrands } from "./hooks/useContent.js";
 
 // Rendered before any route is reached, so it stays a static import.
 import AgeVerification from "./pages/age-verification.jsx";
@@ -64,52 +65,7 @@ const Spirits = lazy(() => import("./pages/spirits/Layout.jsx"));
 const Whisky = lazy(() => import("./pages/whisky/Layout.jsx"));
 const Wine = lazy(() => import("./pages/wine/Layout.jsx"));
 const ZeroAlcohol = lazy(() => import("./pages/zero-alcohol/Layout.jsx"));
-const JacobsCreek = lazy(() => import("./pages/brand-pages/JacobsCreek.jsx"));
-const Lindemans = lazy(() => import("./pages/brand-pages/lindemans.jsx"));
-const McGuigan = lazy(() => import("./pages/brand-pages/McGuigan.jsx"));
-const Penfolds = lazy(() => import("./pages/brand-pages/penfolds.jsx"));
-const Pepperjack = lazy(() => import("./pages/brand-pages/pepperjack.jsx"));
-const SquealingPig = lazy(() => import("./pages/brand-pages/SquealingPig.jsx"));
-const Taylors = lazy(() => import("./pages/brand-pages/taylors.jsx"));
-// The brands below don't have their content built out yet — each file is a
-// placeholder "coming soon" page. Filling one in only means editing that
-// brand's own file; nothing here in App.jsx needs to change.
-const NineteenCrimes = lazy(() => import("./pages/brand-pages/19-crimes.jsx"));
-const Absolut = lazy(() => import("./pages/brand-pages/absolut.jsx"));
-const Belena = lazy(() => import("./pages/brand-pages/belena.jsx"));
-const BrownBrothers = lazy(
-  () => import("./pages/brand-pages/brown-brothers.jsx")
-);
-const BundabergRum = lazy(() => import("./pages/brand-pages/bundaberg.jsx"));
-const CanadianClub = lazy(
-  () => import("./pages/brand-pages/cananidan-club.jsx")
-);
-const Coopers = lazy(() => import("./pages/brand-pages/coopers.jsx"));
-const DeBortoli = lazy(() => import("./pages/brand-pages/de-bortoli.jsx"));
-const Farmhand = lazy(() => import("./pages/brand-pages/farm-hand.jsx"));
-const GrantBurge = lazy(() => import("./pages/brand-pages/grant-burge.jsx"));
-const GreatNorthernBrewingCo = lazy(
-  () => import("./pages/brand-pages/great-northtern-brewing.co.jsx")
-);
-const HardRated = lazy(() => import("./pages/brand-pages/hard-rated.jsx"));
-const Hardys = lazy(() => import("./pages/brand-pages/hardys.jsx"));
-const JackDaniels = lazy(() => import("./pages/brand-pages/jack-daniels.jsx"));
-const Jameson = lazy(() => import("./pages/brand-pages/jameson.jsx"));
-const JimBeam = lazy(() => import("./pages/brand-pages/jim-beam.jsx"));
-const JohnnieWalker = lazy(
-  () => import("./pages/brand-pages/jonnie-walker.jsx")
-);
-const Smirnoff = lazy(() => import("./pages/brand-pages/smrinoff.jsx"));
-const Suntory = lazy(() => import("./pages/brand-pages/suntory.jsx"));
-const TreadSoftly = lazy(() => import("./pages/brand-pages/tread-softly.jsx"));
-const VodkaCruiser = lazy(
-  () => import("./pages/brand-pages/vodka-crusier.jsx")
-);
-const WildTurkey = lazy(() => import("./pages/brand-pages/wild-turkey.jsx"));
-const WolfBlass = lazy(() => import("./pages/brand-pages/wolf-blass.jsx"));
-const Woodstock = lazy(() => import("./pages/brand-pages/woodstock.jsx"));
-const Yalumba = lazy(() => import("./pages/brand-pages/yalumba.jsx"));
-const Yellowtail = lazy(() => import("./pages/brand-pages/yellowtail.jsx"));
+const BrandPage = lazy(() => import("./pages/brand-pages/BrandPage.jsx"));
 
 // Shown briefly while a route's chunk is fetched.
 function RouteFallback() {
@@ -171,6 +127,7 @@ export default function App() {
   const [wishlistNotice, setWishlistNotice] = useState(null);
   const [authDestination, setAuthDestination] = useState("profile");
   const { products, loading: productsLoading } = useProducts();
+  const { data: brands = [], loading: brandsLoading } = useBrands();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -421,6 +378,7 @@ export default function App() {
         <AmbientBackground />
         <ScrollToTop />
         <Navbar
+          brands={brands}
           cartCount={cartCount}
           wishlistCount={wishlistItems.length}
           products={products}
@@ -974,227 +932,16 @@ export default function App() {
                 }
               />
               <Route
-                path="/brands/jacob-s-creek"
+                path="/brands/:brandSlug"
                 element={
-                  <JacobsCreek
+                  <BrandPage
+                    brands={brands}
+                    brandsLoading={brandsLoading}
+                    onAddToCart={addToCart}
                     products={products}
                     productsLoading={productsLoading}
-                    onAddToCart={addToCart}
                   />
                 }
-              />
-              <Route
-                path="/brands/lindeman-s"
-                element={
-                  <Lindemans
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-
-              <Route
-                path="/brands/mcguigan"
-                element={
-                  <McGuigan
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-
-              <Route
-                path="/brands/taylors"
-                element={
-                  <Taylors
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-              <Route
-                path="/brands/penfolds"
-                element={
-                  <Penfolds
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-
-              <Route
-                path="/brands/taylor-s"
-                element={
-                  <Taylors
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-              <Route
-                path="/brands/pepperjack"
-                element={
-                  <Pepperjack
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-              <Route
-                path="/brands/squealing-pig"
-                element={
-                  <SquealingPig
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-
-              <Route
-                path="/taylors"
-                element={
-                  <Taylors
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-
-              {/* Brands without built-out content yet — placeholder pages,
-                  see the lazy imports above. Slugs mirror what the "Brands"
-                  mega-menu generates in utils/shopRoutes.js. */}
-              <Route
-                path="/brands/19-crimes"
-                element={<NineteenCrimes onBack={goHome} />}
-              />
-              <Route
-                path="/brands/absolut"
-                element={<Absolut onBack={goHome} />}
-              />
-              <Route
-                path="/brands/belena"
-                element={<Belena onBack={goHome} />}
-              />
-              <Route
-                path="/brands/brown-brothers"
-                element={<BrownBrothers onBack={goHome} />}
-              />
-              <Route
-                path="/brands/bundaberg-rum"
-                element={<BundabergRum onBack={goHome} />}
-              />
-              <Route
-                path="/brands/canadian-club"
-                element={<CanadianClub onBack={goHome} />}
-              />
-              <Route
-                path="/brands/coopers"
-                element={
-                  <Coopers
-                    onBack={goHome}
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-              <Route
-                path="/brands/de-bortoli"
-                element={<DeBortoli onBack={goHome} />}
-              />
-              <Route
-                path="/brands/farmhand"
-                element={
-                  <Farmhand
-                    onBack={goHome}
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-              <Route
-                path="/brands/grant-burge"
-                element={<GrantBurge onBack={goHome} />}
-              />
-              <Route
-                path="/brands/great-northern-brewing-co"
-                element={
-                  <GreatNorthernBrewingCo
-                    onBack={goHome}
-                    products={products}
-                    productsLoading={productsLoading}
-                    onAddToCart={addToCart}
-                  />
-                }
-              />
-              <Route
-                path="/brands/hard-rated"
-                element={<HardRated onBack={goHome} />}
-              />
-              <Route
-                path="/brands/hardys"
-                element={<Hardys onBack={goHome} />}
-              />
-              <Route
-                path="/brands/jack-daniel-s"
-                element={<JackDaniels onBack={goHome} />}
-              />
-              <Route
-                path="/brands/jameson"
-                element={<Jameson onBack={goHome} />}
-              />
-              <Route
-                path="/brands/jim-beam"
-                element={<JimBeam onBack={goHome} />}
-              />
-              <Route
-                path="/brands/johnnie-walker"
-                element={<JohnnieWalker onBack={goHome} />}
-              />
-              <Route
-                path="/brands/smirnoff"
-                element={<Smirnoff onBack={goHome} />}
-              />
-              <Route
-                path="/brands/suntory"
-                element={<Suntory onBack={goHome} />}
-              />
-              <Route
-                path="/brands/tread-softly"
-                element={<TreadSoftly onBack={goHome} />}
-              />
-              <Route
-                path="/brands/vodka-cruiser"
-                element={<VodkaCruiser onBack={goHome} />}
-              />
-              <Route
-                path="/brands/wild-turkey"
-                element={<WildTurkey onBack={goHome} />}
-              />
-              <Route
-                path="/brands/wolf-blass"
-                element={<WolfBlass onBack={goHome} />}
-              />
-              <Route
-                path="/brands/woodstock"
-                element={<Woodstock onBack={goHome} />}
-              />
-              <Route
-                path="/brands/yalumba"
-                element={<Yalumba onBack={goHome} />}
-              />
-              <Route
-                path="/brands/yellowtail"
-                element={<Yellowtail onBack={goHome} />}
               />
 
               <Route path="*" element={<Navigate replace to="/" />} />

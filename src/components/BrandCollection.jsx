@@ -25,23 +25,32 @@ function ProductSection({
   icon,
   label,
   products,
+  productsLoading,
   title,
 }) {
   return (
     <section className="px-margin-mobile md:px-margin-desktop pb-20">
       <div className="max-w-container-max mx-auto">
-        <div className="mb-8">
-          <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
-            {label}
-          </p>
-          <h2 className="font-serif text-3xl md:text-4xl text-on-surface">
-            {title}
-          </h2>
-          <p className="mt-3 text-sm md:text-base text-on-surface-variant">
-            {description}
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+          <div>
+            <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-3">
+              {label}
+            </p>
+            <h2 className="font-serif text-3xl md:text-4xl text-on-surface">
+              {title}
+            </h2>
+            {description && (
+              <p className="mt-3 text-sm md:text-base text-on-surface-variant">
+                {description}
+              </p>
+            )}
+          </div>
         </div>
-        {products.length > 0 ? (
+        {productsLoading ? (
+          <div className="min-h-[200px] flex items-center justify-center">
+            <p className="text-on-surface-variant">Loading products...</p>
+          </div>
+        ) : products.length > 0 ? (
           <ProductGrid
             addedProduct={addedProduct}
             onAddToCart={handleAddToCart}
@@ -59,6 +68,10 @@ function ProductSection({
 export default function BrandCollection({
   brandName,
   description,
+  bannerImage = "",
+  bestSellingDescription,
+  bestRatedDescription,
+  collectionDescription,
   onAddToCart,
   products = [],
   productsLoading = false,
@@ -87,9 +100,20 @@ export default function BrandCollection({
 
   return (
     <div className="min-h-screen bg-background text-on-surface">
+      {bannerImage && (
+        <section className="relative w-full min-h-[560px] md:min-h-[720px] overflow-hidden">
+          <img
+            src={bannerImage}
+            alt={brandName}
+            className="absolute inset-0 w-full h-full object-cover object-top"
+          />
+          <div className="absolute inset-0 bg-black/30" />
+        </section>
+      )}
+
       <section className="px-margin-mobile md:px-margin-desktop py-16 md:py-24">
         <div className="max-w-container-max mx-auto">
-          <div className="max-w-4xl">
+          <div className="max-w-4xl mx-auto text-center">
             <p className="text-primary text-xs md:text-sm uppercase tracking-[0.25em] mb-5">
               About the Brand
             </p>
@@ -103,41 +127,44 @@ export default function BrandCollection({
         </div>
       </section>
 
-      {productsLoading ? (
-        <div className="min-h-[200px] flex items-center justify-center">
-          <p className="text-on-surface-variant">Loading products...</p>
-        </div>
-      ) : (
-        <>
-          <ProductSection
-            addedProduct={addedProduct}
-            description={`Discover the most popular ${brandName} products.`}
-            handleAddToCart={handleAddToCart}
-            icon="trending_up"
-            label={brandName}
-            products={bestSellingProducts}
-            title="Best Selling Products"
-          />
-          <ProductSection
-            addedProduct={addedProduct}
-            description={`Explore the highest-rated ${brandName} products.`}
-            handleAddToCart={handleAddToCart}
-            icon="star"
-            label={brandName}
-            products={bestRatedProducts}
-            title="Best Rated Products"
-          />
-          <ProductSection
-            addedProduct={addedProduct}
-            description={`Browse all ${brandName} products in our collection.`}
-            handleAddToCart={handleAddToCart}
-            icon="liquor"
-            label="Our Collection"
-            products={brandProducts}
-            title={`All ${brandName} Products`}
-          />
-        </>
-      )}
+      <>
+        <ProductSection
+          addedProduct={addedProduct}
+          description={
+            bestSellingDescription ||
+            `Discover the most popular ${brandName} products.`
+          }
+          handleAddToCart={handleAddToCart}
+          icon="trending_up"
+          label={brandName}
+          products={bestSellingProducts}
+          productsLoading={productsLoading}
+          title="Best Selling Products"
+        />
+        <ProductSection
+          addedProduct={addedProduct}
+          description={
+            bestRatedDescription ||
+            `Explore the highest-rated ${brandName} products.`
+          }
+          handleAddToCart={handleAddToCart}
+          icon="star"
+          label={brandName}
+          products={bestRatedProducts}
+          productsLoading={productsLoading}
+          title="Best Rated Products"
+        />
+        <ProductSection
+          addedProduct={addedProduct}
+          description={collectionDescription}
+          handleAddToCart={handleAddToCart}
+          icon="liquor"
+          label="Our Collection"
+          products={brandProducts}
+          productsLoading={productsLoading}
+          title={`All ${brandName} Products`}
+        />
+      </>
     </div>
   );
 }
