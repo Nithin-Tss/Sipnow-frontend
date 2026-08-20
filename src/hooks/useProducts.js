@@ -20,7 +20,7 @@ export function useProducts() {
   useEffect(() => {
     let cancelled = false;
 
-    apiGet("/products?limit=1000")
+    apiGet("/products?limit=1000&verified=true")
       .then((data) => {
         if (cancelled) return;
         setProducts((data.items || []).map(adaptProduct));

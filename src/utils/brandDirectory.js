@@ -13,8 +13,6 @@ export function matchBrands(term, brands = [], limit = 5) {
   if (!normalized) return [];
 
   return createBrandDirectory(brands)
-    .filter((brand) =>
-    brand.name.toLowerCase().includes(normalized)
-    )
+    .filter((brand) => brand.name.toLowerCase().includes(normalized))
     .slice(0, limit);
 }

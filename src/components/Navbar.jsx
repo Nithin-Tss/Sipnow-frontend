@@ -238,9 +238,7 @@ export default function Navbar({
               }
             : menu
         )
-        .filter(
-          (menu) => menu.label !== "Brands" || brandDirectory.length > 0
-        ),
+        .filter((menu) => menu.label !== "Brands" || brandDirectory.length > 0),
     [brandDirectory, navMenus]
   );
 
@@ -774,15 +772,15 @@ export default function Navbar({
           {mobileNavLinks
             .filter((link) => link !== "Brands" || brandDirectory.length > 0)
             .map((link) => (
-            <Link
-              className="block font-label-md text-label-md text-on-surface/80 hover:text-primary transition-colors tracking-wide"
-              key={link}
-              onClick={closeMenus}
-              to={TOP_LEVEL_ROUTES[link] || `/${slugify(link)}`}
-            >
-              {link}
-            </Link>
-          ))}
+              <Link
+                className="block font-label-md text-label-md text-on-surface/80 hover:text-primary transition-colors tracking-wide"
+                key={link}
+                onClick={closeMenus}
+                to={TOP_LEVEL_ROUTES[link] || `/${slugify(link)}`}
+              >
+                {link}
+              </Link>
+            ))}
 
           <Link
             className="block font-label-md text-label-md text-on-surface/80 hover:text-primary transition-colors tracking-wide"

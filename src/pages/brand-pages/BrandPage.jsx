@@ -33,8 +33,7 @@ export default function BrandPage({
       brandName={brand.name}
       bannerImage={resolveImageUrl(bannerSource)}
       description={
-        brand.description ||
-        `Explore our collection of ${brand.name} products.`
+        brand.description || `Explore our collection of ${brand.name} products.`
       }
       bestSellingDescription={brand.bestSellingDescription}
       bestRatedDescription={brand.bestRatedDescription}
