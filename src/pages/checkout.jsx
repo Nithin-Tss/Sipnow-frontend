@@ -428,9 +428,10 @@ export default function Checkout({
        * Notify App.jsx only after the complete order record is persisted.
        */
       onOrderComplete();
-    } catch {
+    } catch (error) {
       setSubmitError(
-        "We could not save your order. Your cart is still available—please try again."
+        error.message ||
+          "We could not save your order. Your cart is still available—please try again."
       );
     }
   };
