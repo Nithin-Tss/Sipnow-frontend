@@ -266,7 +266,13 @@ export default function ProductDetail({ products = [], onAddToCart }) {
     .slice(0, 4);
 
   const hasFoodPairing = product.foodPairing?.length > 0;
-  const hasIngredients = product.ingredients?.length > 0;
+  const ingredientsList = Array.isArray(product.ingredients)
+    ? product.ingredients
+    : (product.ingredients || "")
+        .split(/[,\n]/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+  const hasIngredients = ingredientsList.length > 0;
 
   return (
     <div className="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto pt-32 lg:pt-36 pb-16">
@@ -412,7 +418,7 @@ export default function ProductDetail({ products = [], onAddToCart }) {
           {hasIngredients && (
             <DetailSection icon="list_alt" title="Ingredients">
               <ul className="text-sm text-on-surface-variant space-y-1">
-                {product.ingredients.map((item) => (
+                {ingredientsList.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
