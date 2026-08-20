@@ -62,6 +62,15 @@ export function useCategories() {
   );
 }
 
+export function useBrands() {
+  return useApiData("/brands?perPage=1000", [], (json) =>
+    (json.items || []).map((brand) => ({
+      ...brand,
+      slug: brand.slug || brand._id,
+    }))
+  );
+}
+
 /** Footer navigation is site UI structure, not catalog/content data. */
 export function useFooterColumns() {
   const footerColumns = [
