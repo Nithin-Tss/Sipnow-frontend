@@ -14,7 +14,7 @@ export function useScrollReveal() {
           if (entry.isIntersecting) entry.target.classList.add("active");
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0 }
     );
 
     observer.observe(el);
