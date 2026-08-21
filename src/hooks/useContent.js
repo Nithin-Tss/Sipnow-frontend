@@ -182,6 +182,52 @@ export function useInStorePromotions() {
   });
 }
 
+/**
+ * Products attached to the currently active general promotions (admin →
+ * General Promotions). Each entry is keyed by its real Product id so the
+ * storefront can match it against the live catalog.
+ */
+export function useGeneralPromotions() {
+  return useApiData("/offers/active", [], (json) => {
+    const promoted = new Map();
+
+    for (const offer of json.offers || []) {
+      for (const product of offer.applicableProducts || []) {
+        const productId = product?._id;
+
+        /* Offers are newest-first, so the first offer to claim a product wins. */
+        if (!productId || !product.name || promoted.has(productId)) continue;
+
+        const price = Number(product.price || 0);
+        const discounted = calculateDiscountedPrice(
+          price,
+          offer.discountType,
+          offer.discountValue
+        );
+
+        promoted.set(productId, {
+          _id: productId,
+          image: resolveImageUrl(product.image),
+          icon: "local_offer",
+          badgeText: formatDiscountBadge(
+            offer.discountType,
+            offer.discountValue
+          ),
+          category: product.category,
+          name: product.name,
+          rating: product.rating ?? 0,
+          reviewCount: product.reviewCount ?? 0,
+          originalPrice: discounted < price ? `$${price.toFixed(2)}` : "",
+          price: `$${discounted.toFixed(2)}`,
+          promoLabel: offer.title,
+        });
+      }
+    }
+
+    return [...promoted.values()];
+  });
+}
+
 export function useNavMenus() {
   return { data: navMenus, loading: false, error: null };
 }
