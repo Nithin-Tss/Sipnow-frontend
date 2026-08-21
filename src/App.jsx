@@ -137,8 +137,9 @@ export default function App() {
     0
   );
 
-  // Carts survive logout/login but remain associated with the account that
-  // created them. Anonymous visitors retain a separate guest cart.
+  // Carts are associated with the account that created them and are
+  // reloaded on login. Anonymous visitors have a separate guest cart, which
+  // is cleared (along with any account cart) on logout.
   useEffect(() => {
     const key = user?.email
       ? `sipnow-cart:${user.email.toLowerCase()}`
@@ -347,7 +348,7 @@ export default function App() {
   const logout = () => {
     window.localStorage.removeItem("sipnow-session");
     setUser(null);
-    setCartItems(normalizeStoredCart(readStored("sipnow-cart", [])));
+    setCartItems([]);
     setWishlistItems([]);
     goHome();
   };
@@ -360,7 +361,7 @@ export default function App() {
   const handleSessionExpired = () => {
     window.localStorage.removeItem("sipnow-session");
     setUser(null);
-    setCartItems(normalizeStoredCart(readStored("sipnow-cart", [])));
+    setCartItems([]);
     setWishlistItems([]);
     navigate("/login", {
       state: {
