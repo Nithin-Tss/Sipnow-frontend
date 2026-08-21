@@ -343,13 +343,30 @@ export default function App() {
     setUser(nextUser);
   };
 
-  // End the current demo session and return to the home page.
+  // End the current session and return to the home page.
   const logout = () => {
     window.localStorage.removeItem("sipnow-session");
     setUser(null);
     setCartItems(normalizeStoredCart(readStored("sipnow-cart", [])));
     setWishlistItems([]);
     goHome();
+  };
+
+  // A backend call came back 401: either the login token expired, or this
+  // session was created before real backend accounts existed and never had
+  // one. Either way there's no account to show data for, so clear it and
+  // send the customer to sign in again instead of leaving a raw API error
+  // ("Authentication required") on screen.
+  const handleSessionExpired = () => {
+    window.localStorage.removeItem("sipnow-session");
+    setUser(null);
+    setCartItems(normalizeStoredCart(readStored("sipnow-cart", [])));
+    setWishlistItems([]);
+    navigate("/login", {
+      state: {
+        authNotice: "Please sign in again to continue.",
+      },
+    });
   };
 
   // Confirming age is remembered so returning visitors aren't re-gated.
@@ -453,10 +470,13 @@ export default function App() {
                 }
               />
               <Route
-                path="/orders/:orderNumber"
+                path="/orders/:orderId"
                 element={
                   user ? (
-                    <OrderDetail user={user} />
+                    <OrderDetail
+                      user={user}
+                      onSessionExpired={handleSessionExpired}
+                    />
                   ) : (
                     <Navigate replace to="/login" />
                   )
@@ -466,7 +486,10 @@ export default function App() {
                 path="/order-history"
                 element={
                   user ? (
-                    <OrderHistory user={user} />
+                    <OrderHistory
+                      user={user}
+                      onSessionExpired={handleSessionExpired}
+                    />
                   ) : (
                     <Navigate replace to="/login" />
                   )

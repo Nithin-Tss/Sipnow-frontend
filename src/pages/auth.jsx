@@ -7,6 +7,11 @@ import {
 } from "../utils/validation.js";
 import { validateEmail } from "../utils/emailValidation.js";
 import PageHero from "../components/PageHero.jsx";
+import {
+  checkEmailAvailable,
+  loginAccount,
+  registerAccount,
+} from "../utils/authApi.js";
 
 const DEMO_OTP = "123456";
 const EMAIL_VERIFICATION_TTL = 10 * 60 * 1000;
@@ -350,7 +355,7 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     });
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     setIsRestartingSignup(false);
     const nextErrors = {};
     if (!NAME_PART_PATTERN.test(values.firstName.trim())) {
@@ -394,17 +399,26 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
       return;
     }
 
-    const existingUser = readStored("sipnow-user");
     const email = values.email.trim().toLowerCase();
-    if (
-      existingUser?.email === email ||
-      existingUser?.mobile === values.mobile
-    ) {
-      setMessage({
-        tone: "error",
-        text: "An account already exists with this email address or mobile number.",
-      });
-      return;
+
+    // Checked against the real backend now (not a local cache) so a taken
+    // email is caught immediately instead of after the whole email-link and
+    // mobile-OTP verification flow, only to fail at the very last step.
+    try {
+      const available = await checkEmailAvailable(email);
+      if (!available) {
+        focusFirstError(
+          {
+            email: "An account already exists with this email address.",
+          },
+          ["email"]
+        );
+        return;
+      }
+    } catch {
+      // If the availability check itself can't be reached, don't block
+      // signup on a transient error — registration will still reject a
+      // genuine duplicate at the final step.
     }
 
     const pendingSignup = {
@@ -424,7 +438,7 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     sendSignupEmailVerification(pendingSignup);
   };
 
-  const handleSignupMobileVerification = () => {
+  const handleSignupMobileVerification = async () => {
     const request = readStored("sipnow-signup-mobile-otp");
     const pendingSignup = readStored("sipnow-pending-signup");
     const nextErrors = {};
@@ -446,20 +460,48 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
       return;
     }
 
-    const user = {
-      ...pendingSignup,
-      emailVerified: true,
-      mobileVerified: true,
-      addresses: [],
-    };
-    window.localStorage.setItem("sipnow-user", JSON.stringify(user));
-    window.localStorage.removeItem("sipnow-pending-signup");
-    window.localStorage.removeItem("sipnow-signup-mobile-otp");
-    window.localStorage.removeItem("sipnow-signup-email-link");
-    authenticateUser(user);
+    try {
+      const { token, user: account } = await registerAccount({
+        name: pendingSignup.name,
+        email: pendingSignup.email,
+        password: pendingSignup.password,
+        phone: pendingSignup.mobile,
+      });
+      const localProfile = readStored("sipnow-user", {});
+      const user = {
+        ...localProfile,
+        ...account,
+        mobile: pendingSignup.mobile,
+        addresses: localProfile.addresses ?? [],
+        token,
+      };
+      window.localStorage.removeItem("sipnow-pending-signup");
+      window.localStorage.removeItem("sipnow-signup-mobile-otp");
+      window.localStorage.removeItem("sipnow-signup-email-link");
+      authenticateUser(user);
+    } catch (error) {
+      if (error.message === "Email is already registered") {
+        // The early check in handleSignup missed this (a race with another
+        // signup, or the account was created after this flow started) — send
+        // the customer back to the form instead of stranding them on the
+        // mobile-OTP step with no way to fix the email that's actually wrong.
+        window.localStorage.removeItem("sipnow-pending-signup");
+        window.localStorage.removeItem("sipnow-signup-mobile-otp");
+        window.localStorage.removeItem("sipnow-signup-email-link");
+        setIsRestartingSignup(true);
+        setDemoSignupLink("");
+        setValues((current) => ({ ...current, otp: "" }));
+        setMessage({
+          tone: "error",
+          text: "An account already exists with this email address. Sign in instead, or use a different email.",
+        });
+      } else {
+        setMessage({ tone: "error", text: error.message });
+      }
+    }
   };
 
-  const handlePasswordLogin = () => {
+  const handlePasswordLogin = async () => {
     const nextErrors = {};
     const emailError = validateEmail(values.email);
     if (emailError) {
@@ -468,19 +510,26 @@ export default function Auth({ mode, onAuthenticated, onSwitch }) {
     if (!values.password) nextErrors.password = "Password is required.";
     if (focusFirstError(nextErrors, ["email", "password"])) return;
 
-    const user = readStored("sipnow-user");
-    if (
-      !user ||
-      user.email !== values.email.trim().toLowerCase() ||
-      user.password !== values.password
-    ) {
+    try {
+      const { token, user: account } = await loginAccount({
+        email: values.email.trim().toLowerCase(),
+        password: values.password,
+      });
+      const localProfile = readStored("sipnow-user", {});
+      const user = {
+        ...localProfile,
+        ...account,
+        mobile: account.phone || localProfile.mobile || "",
+        addresses: localProfile.addresses ?? [],
+        token,
+      };
+      authenticateUser(user);
+    } catch {
       setMessage({
         tone: "error",
         text: "Your email or password is incorrect. Create an account if you are new to SipNow.",
       });
-      return;
     }
-    authenticateUser(user);
   };
 
   const handleSubmit = (event) => {

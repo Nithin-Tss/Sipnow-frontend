@@ -1,44 +1,118 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Reveal from "../components/Reveal.jsx";
 import PageHero from "../components/PageHero.jsx";
-import { formatAddress } from "../utils/addressStorage.js";
-import {
-  formatCartQuantity,
-  formatCurrency,
-  parsePrice,
-} from "../utils/productHelpers.js";
+import { formatCurrency } from "../utils/productHelpers.js";
+import { API_URL } from "../utils/api.js";
+import { authHeader } from "../utils/authApi.js";
 
-function readOrder(orderNumber, user) {
-  try {
-    const orders = JSON.parse(window.localStorage.getItem("sipnow-orders"));
-
-    return Array.isArray(orders)
-      ? orders.find(
-          (order) =>
-            order.orderNumber === orderNumber &&
-            order.customer?.email?.toLowerCase() === user?.email?.toLowerCase()
-        )
-      : null;
-  } catch {
-    return null;
-  }
+function formatOrderId(id) {
+  return id ? `#${String(id).slice(-6).toUpperCase()}` : "#000000";
 }
 
-function formatOrderId(orderNumber) {
-  if (String(orderNumber ?? "").startsWith("#")) return orderNumber;
-  const digits = String(orderNumber ?? "")
-    .replace(/\D/g, "")
-    .slice(-5);
-  return digits ? `#${digits.padStart(5, "0")}` : "#00000";
+function formatShippingAddress(address) {
+  if (!address) return "";
+  return [address.addressLine1, address.addressLine2, address.city]
+    .filter(Boolean)
+    .join(", ");
 }
 
-export default function OrderDetail({ user }) {
+export default function OrderDetail({ user, onSessionExpired }) {
   const navigate = useNavigate();
-  const { orderNumber } = useParams();
+  const { orderId } = useParams();
 
-  const [order, setOrder] = useState(() => readOrder(orderNumber, user));
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [notice, setNotice] = useState("");
+  const [cancelling, setCancelling] = useState(false);
+
+  useEffect(() => {
+    if (!user?.token) {
+      onSessionExpired();
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    async function loadOrder() {
+      setLoading(true);
+      setLoadError("");
+      try {
+        const response = await fetch(`${API_URL}/orders/${orderId}`, {
+          headers: authHeader(user.token),
+        });
+        if (response.status === 401) {
+          if (!cancelled) onSessionExpired();
+          return;
+        }
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(result.message || "This order is unavailable.");
+        }
+        if (!cancelled) setOrder(result);
+      } catch (error) {
+        if (!cancelled) {
+          setLoadError(error.message || "This order is unavailable.");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadOrder();
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId, user?.token, onSessionExpired]);
+
+  const cancelOrder = async () => {
+    if (!order || order.status === "cancelled") return;
+    setCancelling(true);
+    try {
+      const response = await fetch(`${API_URL}/orders/${order._id}/cancel`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeader(user?.token),
+        },
+        body: JSON.stringify({}),
+      });
+      if (response.status === 401) {
+        onSessionExpired();
+        return;
+      }
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.message || "We could not cancel this order.");
+      }
+      setOrder(result.order);
+      setNotice(`Order ${formatOrderId(order._id)} has been cancelled.`);
+    } catch (error) {
+      setLoadError(error.message || "We could not cancel this order.");
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="pt-36 pb-24 sm:pt-40 lg:pt-44">
+        <PageHero
+          onBack={() => navigate("/order-history")}
+          backLabel="Back to order history"
+          tag="Order details"
+        />
+        <Reveal>
+          <main className="mx-auto mt-10 max-w-7xl px-margin-mobile md:px-margin-desktop">
+            <section className="glass-panel rounded-2xl p-8 text-center text-on-surface-variant">
+              Loading order…
+            </section>
+          </main>
+        </Reveal>
+      </div>
+    );
+  }
 
   if (!order) {
     return (
@@ -61,7 +135,7 @@ export default function OrderDetail({ user }) {
               </h1>
 
               <p className="mt-3 text-on-surface-variant">
-                This order is unavailable in local order history.
+                {loadError || "This order is unavailable."}
               </p>
             </section>
           </main>
@@ -70,25 +144,11 @@ export default function OrderDetail({ user }) {
     );
   }
 
-  const address = formatAddress(order.deliveryAddress);
-  const cancelOrder = () => {
-    if (order.status === "CANCELLED") return;
-    const orders = JSON.parse(
-      window.localStorage.getItem("sipnow-orders") ?? "[]"
-    );
-    window.localStorage.setItem(
-      "sipnow-orders",
-      JSON.stringify(
-        orders.map((item) =>
-          item.orderNumber === order.orderNumber
-            ? { ...item, status: "CANCELLED" }
-            : item
-        )
-      )
-    );
-    setOrder((current) => ({ ...current, status: "CANCELLED" }));
-    setNotice(`Order ${formatOrderId(order.orderNumber)} has been cancelled.`);
-  };
+  const address = formatShippingAddress(order.shippingAddress);
+  const cancelled = order.status === "cancelled";
+  const cancellable = ["pending", "confirmed", "processing"].includes(
+    order.status
+  );
 
   return (
     <div className="pt-36 pb-24 sm:pt-40 lg:pt-44">
@@ -109,16 +169,16 @@ export default function OrderDetail({ user }) {
                 </p>
 
                 <h1 className="mt-3 font-headline-md text-3xl">
-                  Order ID: {formatOrderId(order.orderNumber)}
+                  Order ID: {formatOrderId(order._id)}
                 </h1>
 
                 <p className="mt-2 text-sm text-on-surface-variant">
-                  Placed {new Date(order.placedAt).toLocaleString()}
+                  Placed {new Date(order.createdAt).toLocaleString()}
                 </p>
               </div>
 
-              <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm text-primary">
-                {order.status?.replaceAll("_", " ") ?? "Created"}
+              <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-sm capitalize text-primary">
+                {order.status}
               </span>
             </div>
             {notice && (
@@ -132,13 +192,25 @@ export default function OrderDetail({ user }) {
                 {notice}
               </div>
             )}
-            {order.status !== "CANCELLED" && (
+            {loadError && (
+              <div
+                className="mt-5 flex items-center gap-2 rounded-xl border border-error/30 bg-error/10 px-4 py-3 text-sm text-error"
+                role="alert"
+              >
+                <span className="material-symbols-outlined text-[18px]">
+                  error
+                </span>
+                {loadError}
+              </div>
+            )}
+            {!cancelled && cancellable && (
               <button
-                className="mt-5 rounded-lg border border-error/40 px-4 py-2 text-sm text-error hover:bg-error/10"
+                className="mt-5 rounded-lg border border-error/40 px-4 py-2 text-sm text-error hover:bg-error/10 disabled:opacity-60"
+                disabled={cancelling}
                 onClick={cancelOrder}
                 type="button"
               >
-                Cancel order
+                {cancelling ? "Cancelling…" : "Cancel order"}
               </button>
             )}
 
@@ -149,7 +221,11 @@ export default function OrderDetail({ user }) {
                   Fulfilment
                 </p>
 
-                <p className="mt-1 capitalize">{order.fulfilment}</p>
+                <p className="mt-1 capitalize">
+                  {order.fulfilment === "store-pickup"
+                    ? "Store pickup"
+                    : order.fulfilment}
+                </p>
               </div>
 
               {address && (
@@ -168,34 +244,26 @@ export default function OrderDetail({ user }) {
               <h2 className="font-headline-md text-xl">Items</h2>
 
               <div className="mt-3 space-y-3">
-                {order.cartItems.map((item) => (
+                {order.items.map((item, index) => (
                   <div
                     className="flex items-center gap-3"
-                    key={`${item.product.name}-${item.packSize ?? 1}`}
+                    key={`${item.name}-${index}`}
                   >
                     <img
                       alt=""
                       className="h-12 w-12 rounded-md bg-surface-container-high object-contain"
-                      src={item.product.image}
+                      src={item.image}
                     />
 
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium">
-                        {item.product.name}
-                      </p>
+                      <p className="truncate font-medium">{item.name}</p>
 
                       <p className="text-xs text-on-surface-variant">
-                        {formatCartQuantity(item.quantity, item.packSize ?? 1)}
+                        {item.quantity} × {formatCurrency(item.price)}
                       </p>
                     </div>
 
-                    <p>
-                      {formatCurrency(
-                        parsePrice(item.product.price) *
-                          item.quantity *
-                          (item.packSize ?? 1)
-                      )}
-                    </p>
+                    <p>{formatCurrency(item.total)}</p>
                   </div>
                 ))}
               </div>
@@ -221,7 +289,7 @@ export default function OrderDetail({ user }) {
                 <span>Total</span>
 
                 <span className="text-primary">
-                  {formatCurrency(order.total ?? order.subtotal)}
+                  {formatCurrency(order.totalAmount)}
                 </span>
               </div>
             </div>

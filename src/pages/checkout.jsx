@@ -14,6 +14,7 @@ import {
   upsertAddress,
 } from "../utils/addressStorage.js";
 import { API_URL } from "../utils/api.js";
+import { authHeader } from "../utils/authApi.js";
 
 /*
  * ============================================================
@@ -119,15 +120,6 @@ function normalizeAustralianMobile(value) {
     .replace(/^61/, "")
     .replace(/^0/, "")
     .slice(0, 9);
-}
-
-function readPreviousOrders() {
-  try {
-    const orders = JSON.parse(window.localStorage.getItem("sipnow-orders"));
-    return Array.isArray(orders) ? orders : [];
-  } catch {
-    return [];
-  }
 }
 
 /*
@@ -360,18 +352,6 @@ export default function Checkout({
      */
 
     const order = {
-      // FDD order history needs an identifier and status in addition to items.
-      // Five digit identifiers are concise and remain stable in order history.
-      orderNumber: `#${String(
-        readPreviousOrders().reduce((highest, previous) => {
-          const value = Number(
-            String(previous.orderNumber ?? "").replace(/\D/g, "")
-          );
-          return Number.isFinite(value) ? Math.max(highest, value) : highest;
-        }, 0) + 1
-      )
-        .padStart(5, "0")
-        .slice(-5)}`,
       status: fulfilment === "delivery" ? "PAYMENT_PENDING" : "CREATED",
       cartItems,
       customer: {
@@ -400,7 +380,10 @@ export default function Checkout({
     try {
       const response = await fetch(`${API_URL}/orders/storefront`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeader(user?.token),
+        },
         body: JSON.stringify(order),
       });
       const result = await response.json().catch(() => ({}));
@@ -408,24 +391,9 @@ export default function Checkout({
         throw new Error(result.message || "We could not place your order.");
       }
 
-      const previousOrders = readPreviousOrders();
-
       /*
-       * ========================================================
-       * SAVE ORDER HISTORY
-       * ========================================================
-       *
-       * `sipnow-orders` is the canonical local record consumed by the profile
-       * page. Use one write before clearing the live cart: localStorage has
-       * no transaction support, and a second duplicate write could otherwise
-       * leave a partially saved order if storage fails mid-operation.
-       */
-      window.localStorage.setItem(
-        "sipnow-orders",
-        JSON.stringify([order, ...previousOrders])
-      );
-      /*
-       * Notify App.jsx only after the complete order record is persisted.
+       * Order history now lives on the backend (see order-history.jsx), so
+       * there is nothing left to persist locally — just move on.
        */
       onOrderComplete();
     } catch (error) {

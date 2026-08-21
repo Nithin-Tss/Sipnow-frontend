@@ -14,31 +14,53 @@ export default function BrandPage({
   if (brandsLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <p className="text-on-surface-variant">Loading brand...</p>
+        <p className="text-on-surface-variant">
+          Loading brand...
+        </p>
       </div>
     );
   }
 
-  const brand = brands.find((item) => item.slug === brandSlug);
+  const brand = brands.find(
+    (item) =>
+      item.slug === brandSlug &&
+      item.isActive === true &&
+      item.verified === true
+  );
 
   if (!brand) {
     return <Navigate replace to="/" />;
   }
 
   const bannerSource =
-    brand.bannerImage || brand.banner || brand.bannerUrl || brand.logo;
+    brand.bannerImage ||
+    brand.banner ||
+    brand.bannerUrl ||
+    brand.logo;
 
   return (
     <BrandCollection
       brandName={brand.name}
-      bannerImage={resolveImageUrl(bannerSource)}
+      bannerImage={resolveImageUrl(
+        bannerSource
+      )}
       description={
-        brand.description || `Explore our collection of ${brand.name} products.`
+        brand.description ||
+        `Explore our collection of ${brand.name} products.`
       }
-      bestSellingDescription={brand.bestSellingDescription}
-      bestRatedDescription={brand.bestRatedDescription}
-      collectionDescription={brand.collectionDescription}
-      keywords={[brand.name, brand.slug]}
+      bestSellingDescription={
+        brand.bestSellingDescription
+      }
+      bestRatedDescription={
+        brand.bestRatedDescription
+      }
+      collectionDescription={
+        brand.collectionDescription
+      }
+      keywords={[
+        brand.name,
+        brand.slug,
+      ]}
       onAddToCart={onAddToCart}
       products={products}
       productsLoading={productsLoading}
